@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 #from scipy import io
 import scipy.io.wavfile
 
-rate, ster_data = scipy.io.wavfile.read("sample1.wav")
+rate, ster_data = scipy.io.wavfile.read("/wavs/sample1.wav")
 #aud_data = ster_data[:,0]
 
 #aud_data = ster_data[:,1]
