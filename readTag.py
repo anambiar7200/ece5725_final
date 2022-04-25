@@ -19,8 +19,10 @@ import RPi.GPIO as GPIO
 from pirc522 import RFID
 
 rdr = RFID(1, 0, 1000000, 31, 37, 29)
+print("before while loop")
 
 while True:
+  print("waiting for tag")
   rdr.wait_for_tag()
   (error, tag_type) = rdr.request()
   if not error:

@@ -1,7 +1,8 @@
-from deepface import DeepFace
+import cv2
+ # Load an image. 
+ # Photo by Heather Ehrhart: https://www.pexels.com/photo/a-playful-dog-with-its-mouth-open-11757552/
 
-img1 = "anusha1.png"
-img2 = 'anusha2.png'
-model_name = "Facenet"
+img = cv2.imread("dog.jpg")
 
-resp = DeepFace.verify(img1_path = img1, img2_path = img2, model_name = model_name)
+cv2.imshow("DOG", img)
+cv2.waitKey(0)
