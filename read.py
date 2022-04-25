@@ -15,7 +15,7 @@ import subprocess
 #os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
 
 #start_time = time.time() 
-#GPIO.setmode(GPIO.BCM)
+#GPIO.setmode(GPIO.BOARD)
 
 pygame.init()
 WHITE = 255, 255, 255
@@ -27,7 +27,7 @@ my_font = pygame.font.Font(None, 30)
 pygame.mouse.set_visible(True)
 
 rdr = RFID(1, 0, 1000000, 31, 37, 29)
-#GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 anusha = [194, 238, 139, 27, 188]
@@ -36,6 +36,7 @@ alisha = [51, 8, 135, 33, 157]
 running = True
 tag_received = False
 first = False
+match = False
 
 
 
@@ -48,10 +49,15 @@ def setup():
 		screen.blit(text_surface, rect)
 	pygame.display.flip()  
 
+def GPIO13_callback(channel):
+    quit()
+    
+GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300)
 
 
 while (running):
 	setup()
+		
 	if (not tag_received):
 		print("waiting for tag")
 		rdr.wait_for_tag()
@@ -66,6 +72,7 @@ while (running):
 				print("Alisha") 
 			tag_received = True
 			first = True 
+		
 
 	if (tag_received and first):
 		first = False
@@ -76,4 +83,7 @@ while (running):
 		time.sleep(2)
 
 		camera.capture("test.jpg")
-		print("tag recieved")
+		match = True
+	if (match):
+		quit()
+		
