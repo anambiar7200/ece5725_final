@@ -1,34 +1,18 @@
-import RPI.GPIO as GPIO
-from time import sleep
-GPIO.setmode(GPIO.BOARD)
+import RPi.GPIO as GPIO
+import time
 
-motor1A=16
-# motor1B=18
-# motor1E=22
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.OUT)
+p = GPIO.PWM(18, 50)
 
-GPIO.setup(motor1A, GPIO.OUT)
-# GPIO.setup(motor1B, GPIO.OUT)
-# GPIO.setup(motor1E, GPIO.OUT)
+p.start(5)
 
-print("turning motor on")
-GPIO.output(motor1A, GPIO.HIGH)
-# GPIO.output(motor1B, GPIO.LOW)
-# GPIO.output(motor1E, GPIO.HIGH)
-
-# sleep(10.16)
-
-# ratio = input("Enter desired stretch ratio (decimal)")
-# length = input("Enter sample length (mm)")
-# variable = (((ratio))*((length))*.01)
-
-# print("begin tissue stretch")
-# GPIO.output(motor1A, GPIO.LOW)
-# GPIO.output(motor1B, GPIO.HIGH)
-# GPIO.output(motor1E, GPIO.HIGH)
-
-# sleep(variable)
-
-# print("end of tissue stretch")
-# GPIO.output(motor1E, GPIO.LOW)
-
-# GPIO.cleanup()
+try:
+    while True:
+        p.ChangeDutyCycle(5)  # extend
+        time.sleep(3)
+        p.ChangeDutyCycle(10)  # retract
+        time.sleep(3)
+except KeyboardInterrupt:
+    p.stop()
+    GPIO.cleanup()
