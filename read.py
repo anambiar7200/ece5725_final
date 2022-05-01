@@ -11,6 +11,7 @@ import os
 import subprocess
 import io
 import numpy
+from datetime import datetime
 
 #os.putenv("SDL_VIDEODRIVER","fbcon")
 #os.putenv("SDL_FBDEV", "/dev/fb0")
@@ -30,6 +31,7 @@ my_font = pygame.font.Font(None, 30)
 pygame.mouse.set_visible(True)
 
 rdr = RFID(1, 0, 1000000, 31, 37, 29)
+util = rdr.util()
 GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
@@ -103,6 +105,21 @@ def face_det(img):
 	print("didn't find the face")
 	return False
 		
+def store_hist(uid):
+	#block = .... + 7
+	util.set_tag(uid)
+	util.read_out(4)
+	
+	x = datetime.now()
+	print(x)
+	data = [x.year%2000, x.month, x.day, x.hour, x.minute, x.second, None, 1]
+	print(data)
+	print("reading block")
+	util.read_out(9)
+	util.rewrite(9, data)
+	print("written block")
+	util.read_out(9)
+
 # Main
 while (running):
 	if (not tag_received):
@@ -113,20 +130,24 @@ while (running):
 		if not error:
 			print("tag received")
 			(error, uid) = rdr.anticoll()
-			print(uid)
-			if (uid == anusha):
-				print("Anusha") 
-			elif (uid == alisha):
-				print("Alisha") 
-			tag_received = True
-			first = True 
-		
+			if not error:
+				util.auth(rdr.auth_b, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
+
+				print(uid)
+				if (uid == anusha):
+					print("Anusha") 
+				elif (uid == alisha):
+					print("Alisha") 
+				tag_received = True
+				first = True 
 
 	if (tag_received and first):
 		first = False
 		camera = picamera.PiCamera()
 		img = get_img(camera)
 		detected = face_det(img)
+		store_hist(uid)
+
 		# match = face_recog()
 #		camera.start_preview()
 #		time.sleep(2)
