@@ -1,13 +1,38 @@
-from deepface import DeepFace
 import cv2
+import io
+import picamera
+import numpy
 
-img1 = "anusha1.png"
-img2 = "anusha2.png"
+
+stream = io.ByestIO()
+
+with picamera.PiCamera() as camera: 
+  camera.capture(stream, format='jpeg')
 
 
-camera = PiCamera()
+haar_path = (cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+cascade = cv2.CascadeClassifier(haar_path)
 
-camera.start_preview()
-time.sleep(2)
+img = cv2.imdecode(numpy.frombuffer(stream.getvalue(), dtype=numpy.uint8, 1)
+#capture = cv2.VideoCapture(0)
 
-camera.capture("test.jpg")
+while True: 
+  rect, img = capture.read()
+  gray_img =cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+  faces = cascade.detectMultiScale(gray_img, 1.3, 5)
+
+
+  #Draw a rectangle around every found face
+  for (x,y,w,h) in faces:
+      cv2.rectangle(img,(x,y),(x+w,y+h),(255,255,0),4)
+
+  cv2.imwrite('result.jpg',img)
+  cv2.imshow("result", img)
+    
+  # Wait for Esc key to stop
+  k = cv2.waitKey(30) & 0xff
+  if k == 27:
+      break
+    
+# Close the window
+cap.release()
