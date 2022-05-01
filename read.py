@@ -39,9 +39,9 @@ first = False
 match = False
 
 
+start_buttons = {"Scan your card": (160, 120)}
+def setup(my_buttons):
 
-def setup():
-	my_buttons = {"Scan your card": (160, 120)}
 	#screen.fill(BLACK)
 	for my_text, text_pos in my_buttons.items():
 		text_surface = my_font.render(my_text, True, WHITE)
@@ -56,7 +56,7 @@ GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300
 
 
 while (running):
-	setup()
+	setup(start_buttons)
 		
 	if (not tag_received):
 		print("waiting for tag")
@@ -85,5 +85,11 @@ while (running):
 		camera.capture("test.jpg")
 		match = True
 	if (match):
-		quit()
+		camera.stop_preview()
+		screen.fill(BLACK)
+		#time.sleep(3)
+		options = {"Lock": (160, 60), "Unlock": (160, 120)}
+		setup(options)
+		#time.sleep(3)
+		#quit()
 		
