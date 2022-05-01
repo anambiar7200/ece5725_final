@@ -1,9 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(18, GPIO.OUT)
-p = GPIO.PWM(18, 50)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(15, GPIO.OUT)
+p = GPIO.PWM(15, 50)
 
 p.start(5)
 
