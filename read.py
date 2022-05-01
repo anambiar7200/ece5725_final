@@ -1,6 +1,7 @@
 import sys
 sys.path.append("/usr/lib/python3/dist-packages")
-from picamera import PiCamera
+import picamera 
+import cv2
 import time
 import RPi.GPIO as GPIO
 from pirc522 import RFID
@@ -8,6 +9,8 @@ import pygame
 from pygame.locals import * 
 import os
 import subprocess
+import io
+import numpy
 
 #os.putenv("SDL_VIDEODRIVER","fbcon")
 #os.putenv("SDL_FBDEV", "/dev/fb0")
@@ -57,7 +60,7 @@ def disp(my_buttons):
 # Physical quit button.
 def GPIO13_callback(channel):
     quit()
-    
+    img = cv2.imdecode(numpy.frombuffer(stream.getvalue(), dtype=numpy.uint8), 1)
 GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300)
 
 # Function to lock door (ie retract linear actuator).
@@ -74,6 +77,32 @@ def unlock():
 	time.sleep(1)
 	p.ChangeDutyCycle(0)  # stop
 
+
+def get_img(camera): 
+	stream = io.BytesIO()
+	camera.resolution = (320, 240)
+	camera.capture(stream, format='jpeg')
+	img = cv2.imdecode(numpy.frombuffer(stream.getvalue(), dtype=numpy.uint8), 1)
+	return img
+	#cv2.imwrite('result.jpg',img)
+	
+def face_det(img): 
+	haar_path = (cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+	cascade = cv2.CascadeClassifier(haar_path)
+	gray_img =cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+	faces = cascade.detectMultiScale(gray_img, 1.1, 5)
+	for (x,y,w,h) in faces:
+		#print("found a face")
+		cv2.rectangle(img,(x,y),(x+w,y+h),(255,255,0),4)
+	cv2.imwrite('result.jpg',img)
+	
+	if len(faces) == 1: 
+		print("found a face")
+		return True
+		#face_recog()
+	print("didn't find the face")
+	return False
+		
 # Main
 while (running):
 	if (not tag_received):
@@ -95,10 +124,13 @@ while (running):
 
 	if (tag_received and first):
 		first = False
-		camera = PiCamera()
-		camera.start_preview()
-		time.sleep(2)
-		camera.capture("test.jpg")
+		camera = picamera.PiCamera()
+		img = get_img(camera)
+		detected = face_det(img)
+		# match = face_recog()
+#		camera.start_preview()
+#		time.sleep(2)
+#		camera.capture("test.jpg")
 		match = True
 	if (match):
 		camera.stop_preview()
