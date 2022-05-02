@@ -5,7 +5,7 @@ import numpy
 #import keyboard
 import os
 
-user_num = 2
+user_num = 1
 
 stream = io.BytesIO()
 
@@ -14,11 +14,11 @@ with picamera.PiCamera() as camera:
 	camera.capture(stream, format='jpeg')
   
 img_taken = 0
-total_num_img = 3
+total_num_img = 50
 
 dirname = "user" + str(user_num)
 if dirname not in os.listdir("pictures"):
-  os.mkdir("pictures" + dirname)
+  os.mkdir("pictures/" + dirname)
   existing_pics = 0
 else: 
   existing_pics = len(os.listdir("pictures/"+dirname))
