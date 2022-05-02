@@ -28,15 +28,16 @@ RED = 255, 0, 0
 GREEN = 0, 255, 0
 screen = pygame.display.set_mode((320, 240))
 my_font = pygame.font.Font(None, 30)
+my_small_font = pygame.font.Font(None, 20)
 pygame.mouse.set_visible(True)
 
 rdr = RFID(1, 0, 1000000, 31, 37, 29)
 util = rdr.util()
 GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-
 anusha = [194, 238, 139, 27, 188]
 alisha = [51, 8, 135, 33, 157]
+uids = {"[194, 238, 139, 27, 188]": 1, "[51, 8, 135, 33, 157]": 2}
 
 # Setting up Linear Actuator
 GPIO.setmode(GPIO.BOARD)
@@ -51,14 +52,22 @@ match = False
 start_buttons = {"Scan your card": (160, 120)}
 
 # Function to display text on piTFT display.
-def disp(my_buttons):
+def disp(my_buttons, font):
 	screen.fill(BLACK)
 	for my_text, text_pos in my_buttons.items():
-		text_surface = my_font.render(my_text, True, WHITE)
+		text_surface = font.render(my_text, True, WHITE)
 		rect = text_surface.get_rect(center=text_pos)
 		screen.blit(text_surface, rect)
 	pygame.display.flip()  
 
+def disp_tup(blist, font): 
+	screen.fill(BLACK)
+	for my_text,text_pos in blist:
+		text_surface = font.render(my_text, True, WHITE)
+		rect = text_surface.get_rect(center=text_pos)
+		screen.blit(text_surface, rect)
+	pygame.display.flip() 
+		
 # Physical quit button.
 def GPIO13_callback(channel):
     quit()
@@ -105,39 +114,92 @@ def face_det(img):
 	print("didn't find the face")
 	return False
 		
-def store_hist(uid):
-	#block = .... + 7
+def store_hist(uid, usr_num, match):
 	util.set_tag(uid)
-	util.read_out(4)
-	
 	x = datetime.now()
-	print(x)
-	data = [x.year%2000, x.month, x.day, x.hour, x.minute, x.second, 1]
-	print(data)
-	print("reading block")
-	util.read_out(9)
-	util.rewrite(9, data)
-	print("written block")
-	util.read_out(9)
+	data = [x.year%2000, x.month, x.day, x.hour, x.minute, x.second, match]
+	top = usr_num * 4
+	util.read_out(top)
+	middle = rdr.read(top)[1]
+	oldest = rdr.read(top + 1)[1]
+	util.rewrite(top+1, middle)
+	util.rewrite(top+2, oldest)
+	util.rewrite(top, data)
+	util.read_out(top)
 
+def showHist(uid, usr_num):
+	hist = [(usr_num * 4), (usr_num * 4) + 1, (usr_num * 4) + 2]
+	
+	hist1 = rdr.read(hist[0])[1]
+	date1 = str(hist1[1])+"/"+str(hist1[2])+"/"+str(hist1[0])
+	time1 = str(hist1[3])+":"+str(hist1[4])+":"+str(hist1[5])
+	if (hist1[6]):
+		grants1 = "Granted"
+	else:
+		grants1 = "Denied"
+	
+	hist2 = rdr.read(hist[1])[1]
+	date2 = str(hist2[1])+"/"+str(hist2[2])+"/"+str(hist2[0])
+	time2 = str(hist2[3])+":"+str(hist2[4])+":"+str(hist2[5])
+	if (hist2[6]):
+		grants2 = "Granted"
+	else:
+		grants2 = "Denied"
+	
+	hist3 = rdr.read(hist[2])[1]
+	date3 = str(hist3[1])+"/"+str(hist3[2])+"/"+str(hist3[0])
+	time3 = str(hist3[3])+":"+str(hist3[4])+":"+str(hist3[5])
+	if (hist3[6]):
+		grants3 = "Granted"
+	else:
+		grants3 = "Denied"
+	
+	
+	mhist = [("Date", (50, 20)), ("Time", (110, 20)), ("Access Granted", (200, 20)),
+	
+	(date1, (50,50)), (time1, (110,50)), (grants1, (200,50)),
+	(date2, (50,80)), (time2, (110,80)), (grants2, (200,80)),
+	(date3, (50,110)), (time3, (110,110)), (grants3, (200,110))]
+
+	disp_tup(mhist, my_small_font)
+	#disp(my_hist, my_small_font)
+	print(hist1)
+	print(hist2)
+	print(hist3)
+	print(date1)
+	print(date2)
+	print(date3)
+	print(grants1)
+	print(grants2)
+	print(grants3)
+	
+	
+	
+def addUser():
+	print("adding user")
+	
+def remUser():
+	print("removing user")
+	
+superuser = 0
+showing_hist = 0
 # Main
 while (running):
 	if (not tag_received):
-		disp(start_buttons)
-		print("waiting for tag")
+		disp(start_buttons, my_font)
 		rdr.wait_for_tag()
 		(error, tag_type) = rdr.request()
 		if not error:
-			print("tag received")
 			(error, uid) = rdr.anticoll()
 			if not error:
 				util.auth(rdr.auth_b, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
 
 				print(uid)
-				if (uid == anusha):
-					print("Anusha") 
-				elif (uid == alisha):
-					print("Alisha") 
+				if (str(uid) in uids):
+					user = uids[str(uid)]
+					if (user == 1 or user == 2):
+						superuser = 1
+					print(user) 
 				tag_received = True
 				first = True 
 
@@ -146,27 +208,54 @@ while (running):
 		camera = picamera.PiCamera()
 		img = get_img(camera)
 		detected = face_det(img)
-		store_hist(uid)
+		match = 1
+		store_hist(uid, user, match)
 
-		# match = face_recog()
-#		camera.start_preview()
-#		time.sleep(2)
-#		camera.capture("test.jpg")
-		match = True
 	if (match):
-		camera.stop_preview()
-		screen.fill(BLACK)
-		options = {"Lock": (160, 60), "Unlock": (160, 120)}
-		disp(options)
-		for event in pygame.event.get(): 
-    
-			if (event.type is MOUSEBUTTONDOWN):
-				pos = pygame.mouse.get_pos()
-			elif(event.type is MOUSEBUTTONUP):
-				pos = pygame.mouse.get_pos()
-				x,y = pos    
-				if x > 100 and x < 200:
-					if y < 90:
-						lock()
-					elif y > 100 and y < 150:
-						unlock()
+		if (superuser):
+			
+			camera.stop_preview()
+			screen.fill(BLACK)
+			
+			options = {"Add User": (160, 30), "Remove User": (160, 70), "Lock": (160, 110), "Unlock": (160, 150), "History": (160, 190)}
+			if ( not showing_hist):
+				disp(options, my_font)
+			for event in pygame.event.get(): 
+		
+				if (event.type is MOUSEBUTTONDOWN):
+					pos = pygame.mouse.get_pos()
+				elif(event.type is MOUSEBUTTONUP):
+					pos = pygame.mouse.get_pos()
+					x,y = pos    
+					if x > 100 and x < 200:
+						if y > 20 and y < 40:
+							addUser()
+						elif y > 60 and y < 80:
+							remUser()
+						elif y > 100 and y < 120:
+							lock()
+						elif y > 140 and y < 160:
+							unlock()
+						elif y > 180 and y < 200:
+							showing_hist = 1
+							showHist(uid, user)
+		else: 
+			
+			camera.stop_preview()
+			screen.fill(BLACK)
+			options = {"Lock": (160, 60), "Unlock": (160, 120), "History": (160, 180)}
+			disp(options, my_font)
+			for event in pygame.event.get(): 
+		
+				if (event.type is MOUSEBUTTONDOWN):
+					pos = pygame.mouse.get_pos()
+				elif(event.type is MOUSEBUTTONUP):
+					pos = pygame.mouse.get_pos()
+					x,y = pos    
+					if x > 100 and x < 200:
+						if y < 90:
+							lock()
+						elif y > 100 and y < 150:
+							unlock()
+						elif y > 160 and y < 210:
+							showHist(uid, user)
