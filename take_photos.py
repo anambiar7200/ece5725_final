@@ -1,18 +1,18 @@
 import cv2
 import io
-#import picamera
+import picamera
 import numpy
-import keyboard
+#import keyboard
 import os
 
 user_num = 2
 
-# stream = io.BytesIO()
+stream = io.BytesIO()
 
-# with picamera.PiCamera() as camera: 
-# 	camera.resolution = (320, 240)
-# 	camera.capture(stream, format='jpeg')
-
+with picamera.PiCamera() as camera: 
+	camera.resolution = (320, 240)
+	camera.capture(stream, format='jpeg')
+  
 img_taken = 0
 total_num_img = 3
 
@@ -25,8 +25,9 @@ else:
 
 
 while (img_taken < total_num_img): 
-  cam = cv2.VideoCapture(0)
-  rect, img = cam.read()
+  #cam = cv2.VideoCapture(0)
+  #rect, img = cam.read()
+  img = cv2.imdecode(numpy.frombuffer(stream.getvalue(), dtype=numpy.uint8), 1)
   flname = "pictures/" + dirname + "/pic" + str(img_taken + existing_pics) + ".jpg"
   print(flname)
   cv2.imwrite(flname, img)

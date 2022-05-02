@@ -112,7 +112,7 @@ def store_hist(uid):
 	
 	x = datetime.now()
 	print(x)
-	data = [x.year%2000, x.month, x.day, x.hour, x.minute, x.second, None, 1]
+	data = [x.year%2000, x.month, x.day, x.hour, x.minute, x.second, 1]
 	print(data)
 	print("reading block")
 	util.read_out(9)
