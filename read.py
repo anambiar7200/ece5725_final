@@ -12,6 +12,7 @@ import subprocess
 import io
 import numpy
 from datetime import datetime
+import face_recog as fr
 
 #os.putenv("SDL_VIDEODRIVER","fbcon")
 #os.putenv("SDL_FBDEV", "/dev/fb0")
@@ -61,6 +62,8 @@ def disp(my_buttons, font):
 		screen.blit(text_surface, rect)
 	pygame.display.flip()  
 
+# Function to display text on piTFT display. 
+# Takes a list of tuples (not a dict) as an input
 def disp_tup(blist, font): 
 	screen.fill(BLACK)
 	for my_text,text_pos in blist:
@@ -197,6 +200,8 @@ GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300
 	
 superuser = 0
 showing_hist = 0
+users = os.listdir("./pictures")
+
 # Main
 while (running):
 	if (not tag_received):
@@ -204,21 +209,20 @@ while (running):
 		if not GPIO.input(16):
 			tag_received = True
 			first = True 
-		bleh = """
 		disp(start_buttons, my_font)
-		rdr.wait_for_tag()
-		(error, tag_type) = rdr.request()
-		if not error:
-			(error, uid) = rdr.anticoll()
-			if not error:
-				util.auth(rdr.auth_b, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
+		# rdr.wait_for_tag()
+		# (error, tag_type) = rdr.request()
+		# if not error:
+		# 	(error, uid) = rdr.anticoll()
+		# 	if not error:
+		# 		util.auth(rdr.auth_b, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
 
-				print(uid)
-				if (str(uid) in uids):
-					user = uids[str(uid)]
-					if (user == 1 or user == 2):
-						superuser = 1
-					print(user)  """
+		# 		print(uid)
+		# 		if (str(uid) in uids):
+		# 			user = uids[str(uid)]
+		# 			if (user == 1 or user == 2):
+		# 				superuser = 1
+		# 			print(user) 
 
 
 	if (tag_received and first):
@@ -226,8 +230,10 @@ while (running):
 		first = False
 		camera = picamera.PiCamera()
 		img = get_img(camera)
-		detected = face_det(img)
-		match = 1
+		#detected = face_det(img)
+
+		match = fr.test_recog(img, "user2")
+		print("match")
 		store_hist(uid, user, match)
 
 	if (match):

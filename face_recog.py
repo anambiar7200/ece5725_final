@@ -4,10 +4,6 @@ import numpy as np
 import os
 import pickle
 
-
-
-users = os.listdir("./pictures")
-
 def get_encodings(users):
     known_names = []
     known_name_encodings = []
@@ -33,7 +29,7 @@ def get_encodings(users):
 
 
 #test_image = "./test/test.jpg"
-test_image = "anusha1.png"
+#test_image = "anusha1.png"
 #test_image = "alisha1.jpg"
 
 def test_recog(test_image,true_name):
@@ -70,7 +66,7 @@ def test_recog(test_image,true_name):
 
     return name == true_name
 
-encode = input("Do you need to get encodings?")
-if encode == "yes": 
-    get_encodings(users)
-print(test_recog(test_image,  "user2"))
+# encode = input("Do you need to get encodings?")
+# if encode == "yes": 
+#     get_encodings(users)
+# print(test_recog(test_image,  "user2"))
