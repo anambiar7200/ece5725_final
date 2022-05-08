@@ -34,6 +34,7 @@ pygame.mouse.set_visible(True)
 rdr = RFID(1, 0, 1000000, 31, 37, 29)
 util = rdr.util()
 GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 anusha = [194, 238, 139, 27, 188]
 alisha = [51, 8, 135, 33, 157]
@@ -71,8 +72,18 @@ def disp_tup(blist, font):
 # Physical quit button.
 def GPIO13_callback(channel):
     quit()
-    img = cv2.imdecode(numpy.frombuffer(stream.getvalue(), dtype=numpy.uint8), 1)
-GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300)
+    #img = cv2.imdecode(numpy.frombuffer(stream.getvalue(), dtype=numpy.uint8), 1)
+    
+
+# Physical "RFID tag" button
+def GPIO16_callback(channel):
+    global tag_recieved
+    global first
+    tag_received = True
+    first = True
+    print("callback!")
+    
+
 
 # Function to lock door (ie retract linear actuator).
 def lock():
@@ -98,8 +109,8 @@ def get_img(camera):
 	#cv2.imwrite('result.jpg',img)
 	
 def face_det(img): 
-	haar_path = (cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-	cascade = cv2.CascadeClassifier(haar_path)
+	#haar_path = (cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+	cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
 	gray_img =cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 	faces = cascade.detectMultiScale(gray_img, 1.1, 5)
 	for (x,y,w,h) in faces:
@@ -181,11 +192,19 @@ def addUser():
 def remUser():
 	print("removing user")
 	
+GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300)
+#GPIO.add_event_detect(16, GPIO.FALLING, callback=GPIO16_callback, bouncetime=300)	
+	
 superuser = 0
 showing_hist = 0
 # Main
 while (running):
 	if (not tag_received):
+		disp(start_buttons, my_font)
+		if not GPIO.input(16):
+			tag_received = True
+			first = True 
+		bleh = """
 		disp(start_buttons, my_font)
 		rdr.wait_for_tag()
 		(error, tag_type) = rdr.request()
@@ -199,11 +218,11 @@ while (running):
 					user = uids[str(uid)]
 					if (user == 1 or user == 2):
 						superuser = 1
-					print(user) 
-				tag_received = True
-				first = True 
+					print(user)  """
+
 
 	if (tag_received and first):
+		print("we got here!")
 		first = False
 		camera = picamera.PiCamera()
 		img = get_img(camera)
