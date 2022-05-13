@@ -31,3 +31,10 @@ td, th {
 tr:nth-child(even) {
   background-color: #dddddd;
 }
+
+.fsm {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
