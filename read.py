@@ -15,6 +15,7 @@ from datetime import datetime
 import face_recog as fr
 import requests
 import take_photos
+import shutil
 
 #os.putenv("SDL_VIDEODRIVER","fbcon")
 #os.putenv("SDL_FBDEV", "/dev/fb0")
@@ -227,27 +228,41 @@ def addUser():
 	disp(add_picture_buttons, my_font)
 	#fr.get_encodings(users)
 	success = "User "+str(user) + " successfully added"
-	add_picture_buttons = {success: (160, 120)}
+	add_picture_buttons = {success: (160, 120), "Back": (280, 220)}
 	disp(add_picture_buttons, my_font)
 	#print(users)
 
 	
 def remUser():
 	print("removing user")
-	if not GPIO.input(11):
-		user = 1
-	elif not GPIO.input(15):
-		user = 2
-	elif not GPIO.input(16):
-		user = 3
+	removing_initial_buttons = {"Please select the user to remove": (160, 120)}
+	disp(removing_initial_buttons, my_font)
+	pressed = False
+	while(not pressed):
+		if not GPIO.input(11):
+			user = 1
+			pressed = True
+		elif not GPIO.input(15):
+			user = 2
+			pressed = True
+		elif not GPIO.input(16):
+			user = 3
+			pressed = True
 	users.remove("user" + str(user))
-	os.rmdir("./pictures/user"+ str(user))
+	print(users)
+	shutil.rmtree("./pictures/user"+ str(user))
+	#print(users)
+	success = "User "+str(user) + " successfully removed"
+	removing_initial_buttons = {success: (160, 120), "Back": (280, 220)}
+	disp(removing_initial_buttons, my_font)
 	
 
 GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300)	
 	
 superusers = [1, 2]
 showing_hist = 0
+adding_user = 0
+removing_user = 0
 users = os.listdir("./pictures")
 
 # Main
@@ -306,7 +321,7 @@ while (running):
 			screen.fill(BLACK)
 			
 			options = {"Add User": (160, 30), "Remove User": (160, 70), "Lock": (160, 110), "Unlock": (160, 150), "History": (160, 190), "EXIT": (280, 220)}
-			if ( not showing_hist):
+			if ( not showing_hist and not adding_user and not removing_user):
 				disp(options, my_font)
 				for event in pygame.event.get(): 
 			
@@ -317,8 +332,10 @@ while (running):
 						x,y = pos    
 						if x > 100 and x < 200:
 							if y > 20 and y < 40:
+								adding_user = 1
 								addUser()
 							elif y > 60 and y < 80:
+								removing_user = 1
 								remUser()
 							elif y > 100 and y < 120:
 								lock()
@@ -343,6 +360,30 @@ while (running):
 						if x > 250: 
 							if y > 200: 
 								showing_hist = False
+								#print("clicked back button")
+			elif adding_user:
+				for event in pygame.event.get(): 
+					#print(event)
+					if (event.type is MOUSEBUTTONDOWN):
+						pos = pygame.mouse.get_pos()
+					elif(event.type is MOUSEBUTTONUP):
+						pos = pygame.mouse.get_pos()
+						x,y = pos    
+						if x > 250: 
+							if y > 200: 
+								adding_user = False
+								#print("clicked back button")
+			elif removing_user:
+				for event in pygame.event.get(): 
+					#print(event)
+					if (event.type is MOUSEBUTTONDOWN):
+						pos = pygame.mouse.get_pos()
+					elif(event.type is MOUSEBUTTONUP):
+						pos = pygame.mouse.get_pos()
+						x,y = pos    
+						if x > 250: 
+							if y > 200: 
+								removing_user = False
 								#print("clicked back button")
 		else: 
 			
