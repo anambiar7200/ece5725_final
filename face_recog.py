@@ -4,26 +4,26 @@ import numpy as np
 import os
 import pickle
 
-def get_encodings(users):
+def get_encodings(usr):
     known_names = []
     known_name_encodings = []
-    for usr in users:
-        path = "./pictures/" + usr 
-        images = os.listdir(path)
-        for _ in images:
-            image = fr.load_image_file(path +"/" + _)
-
-            image_path = path + "/" + _
-            print(image_path)
-            encoding = fr.face_encodings(image)[0]
-            #print(encoding)
-
-            known_name_encodings.append(encoding)
-            known_names.append(usr)
     
-    with open("encodings", "wb") as enc: 
+    path = "./pictures/" + usr 
+    images = os.listdir(path)
+    for _ in images:
+        image = fr.load_image_file(path +"/" + _)
+
+        image_path = path + "/" + _
+        print(image_path)
+        encoding = fr.face_encodings(image)[0]
+        #print(encoding)
+
+        known_name_encodings.append(encoding)
+        known_names.append(usr)
+    
+    with open("encodings", "a+") as enc: 
         pickle.dump(known_name_encodings, enc)
-    with open("names", "wb") as names: 
+    with open("names", "a+") as names: 
         pickle.dump(known_names, names)
 
 
