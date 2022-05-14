@@ -42,17 +42,19 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="#">Smart Lock</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#intro">Introduction</a></li>
             <li><a href="#obj">Project Objective</a></li>
-            <li><a href="#design">Design</a></li>
-            <li><a href="#drawings">Drawings</a></li>
-            <li><a href="#testing">Testing</a></li>
-            <li><a href="#result">Result</a></li>
+            <li><a href="#design">Design and Testing</a></li>
+            <li><a href="#result">Results and Conclusion</a></li>
+            <li><a href="#budget">Budget and Parts</a></li>
+            <li><a href="#team">Team Member Info</a></li>
+            <li><a href="#references">References</a></li>
+            <li><a href="https://github.com/anambiar7200/ece5725_final" class=button>Code Appendix</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -61,8 +63,8 @@
     <div class="container">
 
       <div class="starter-template">
-        <h1>Awesome ECE5725 Project</h1>
-        <p class="lead">Really Awesome<br>A Project By Jane Doe.</p>
+        <h1>Smart Lock</h1>
+        <p class="lead">ECE 5725 Final Project - Spring 2022<br>Alisha Kochar (ak2255), Anusha Nambiar (aan29)</p>
       </div>
 
       <hr>
@@ -75,21 +77,31 @@
 
       <div style="text-align:center;">
               <h2>Introduction</h2>
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
+              <p style="text-align: left;padding: 0px 30px;">Our Smart Lock uses <strong>two-factor authenticatio</strong> to grant 
+                access to users recognized by the system. Upon access granted, all users are able to lock or unlock 
+                the system. The first method of authentication uses a user-assigned RFID tag, which is scanned by an 
+                RFID receiver. If recognized by the system, the system will then use a camera to scan the user’s face 
+                and use <strong>facial recognition</strong> via <strong>machine learning</strong> to either grant access if the user is the correct individual associated 
+                with the tag, or deny access if the user if not the correct individual associated with the tag. Our 
+                smart lock has two modes –– 1) a superuser mode –– this individual has the ability to add new users, 
+                remove existing users, view the recent access history associated with their tag (date+time, access 
+                permissions (i.e. granted or denied)), as well as lock and unlock the lock, and 2) a regular user 
+                mode –– this individual has the ability to either lock or unlock the lock, as well as view the recent 
+                access history associated with their tag. The Smart Lock has been developed using a <strong>Raspberry Pi 4B</strong> as 
+                the final project of <strong>ECE 5725 Design with Embedded OS</strong> class at Cornell University.</p>
       </div>
 
     <hr id='obj'>
 
       <div class="row">
+          <h2 style="text-align:center;">Project Objective</h2>
           <div class="col-md-4" style="text-align:center;">
-          <img class="img-rounded" src="pics/1.jpg" alt="Generic placeholder image" width="240" height="240">
+          <img class="img-rounded" src="pics/initial_sketch.png" alt="Generic placeholder image" width="330" height="240">
           </div>
           <div class="col-md-8" style="font-size:18px;">
-          <h2>Project Objective:</h2>
           <ul>
-              <li>some important objectives.some important objectives.some important objectives.some important objectives.</li>
-                <li>some other important objectives.</li>
-            <li>some not-that-important objectives.</li>
+              <li>Permit users access to the system via two-factor authentication (1. RFID read-tag, 2. facial recognition via ML)</li>
+              <li>Permit actions for users and recent history per each user mode (superuser vs. regular)</li>
           </ul>
           </div>
       </div>
@@ -97,67 +109,111 @@
     <hr id='design'>
 
       <div style="text-align:center;">
-              <h2>Design</h2>
+              <h2>Design and Testing</h2>
+              <div class="row">
+                <img src="pics/intro_fsm.jpeg" alt="Beginning project FSM">
+              </div>
               <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
       </div>
 
-    <hr id='drawings'>
+    <hr id='results'>
 
       <div style="text-align:center;">
-              <h2>Drawings</h2>
+              <h2>Results and Conclusion</h2>
               <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
       </div>
 
-    <hr id='testing'>
+      <hr id='budget'>
 
-      <div style="text-align:center;">
-              <h2>Testing</h2>
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
-      </div>
-
-    <hr id='result'>
-
-      <div style="text-align:center;">
-              <h2>Result</h2>
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
-      </div>
-
-    <hr>
-
-    <div class="row" style="text-align:center;">
-          <h2>Work Distribution</h2>
-          <div style="text-align:center;">
-              <img class="img-rounded" src="pics/group.jpg" alt="Generic placeholder image" style="width:80%;">
-              <h4>Project group picture</h4>
-          </div>
-          <div class="col-md-6" style="font-size:16px">
-              <img class="img-rounded" src="pics/a.png" alt="Generic placeholder image" width="240" height="240">
-              <h3>Rick</h3>
-              <p class="lead">netid@cornell.edu</p>
-              <p>Designed the overall software architecture (Just being himself).
-          </div>
-          <div class="col-md-6" style="font-size:16px">
-              <img class="img-rounded" src="pics/b.png" alt="Generic placeholder image" width="240" height="240">
-              <h3>Morty</h3>
-              <p class="lead">netid@cornell.edu</p>
-              <p>Tested the overall system.
-          </div>
-      </div>
-
-    <hr>
       <div style="font-size:18px">
-          <h2>Parts List</h2>
-          <ul>
-              <li>Raspberry Pi $35.00</li>
-              <li>Raspberry Pi Camera V2 $25.00</li>
-              <a href="https://www.adafruit.com/product/1463"><li>NeoPixel Ring - $9.95</li></a>
-              <li>LEDs, Resistors and Wires - Provided in lab</li>
-          </ul>
-          <h3>Total: $69.95</h3>
-      </div>
-      <hr>
+          <h2 style="text-align:center;">Budget and List of Parts</h2>
+
+            <table>
+              <tr>
+                <th>Item</th>
+                <!-- <th>Purchase Link</th> -->
+                <th>Price</th>
+                <th>Source</th>
+              </tr>
+              <tr>
+                <td>Raspberry Pi 4B 2GB</td>
+                <td>$35</td>
+                <td>Lab</td>
+              </tr>
+              <tr>
+                <td>PiTFT 2.8" Touchscreen</td>
+                <td>$34.95</td>
+                <td>Lab</td>
+              </tr>
+              <tr>
+                <td>Pi Cobbler + Breakout Cable</td>
+                <td>$6.50</td>
+                <td>Lab</td>
+              </tr>
+              <tr>
+                <td>Red and White RPi4 Case</td>
+                <td>$5</td>
+                <td>Lab</td>
+              </tr>
+              <tr>
+                <td>SD Card 16GB</td>
+                <td>$8.95</td>
+                <td>Lab</td>
+              </tr>
+              <tr>
+                <td>Jumpers</td>
+                <td>-</td>
+                <td>Lab</td>
+              </tr>
+              <tr>
+                <td>Mifare RC522 RF IC Card Sensor Module</td>
+                <td>$9.99</td>
+                <td>Owned (Alisha)</td>
+              </tr>
+              <tr>
+                <td>Linear Actuator (50mm stroke, 50:1 ratio, 6 volts)</td>
+                <td>$70.00</td>
+                <td>Owned (Alisha)</td>
+              </tr>
+              <tr>
+                <td>Patio Door Lock</td>
+                <td>$23.65</td>
+                <td>Owned (Alisha)</td>
+              </tr>
+              <tr>
+                <td style="text-align:right;"><strong>Total</strong></td>
+                <td>$194.04</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="text-align:right;"><strong>Actual Expenditure</strong></td>
+                <td>$0</td>
+                <td>Items bought for this project</td>
+              </tr>
+             
+            </table>
+    </div>
+    <hr id='team'>
+  <div style="text-align:center;">
+    <h2>Team Member Information</h2>
+    <div class="col-md-6" style="font-size:16px">
+      <img class="img-rounded" src="pics/Headshot_Kochar.png" alt="Generic placeholder image" width="240" height="240">
+      <h4>Alisha Kochar</h4>
+      <p><em>Electrical and Computer Engineering, MEng 2022</em></p>
+      <p>ak2255@cornell.edu</p>
+  </div>
+  <div class="col-md-6" style="font-size:16px">
+      <img class="img-rounded" src="pics/b.png" alt="Generic placeholder image" width="240" height="240">
+      <h4>Anusha Nambiar</h4>
+      <p><em>Electrical and Computer Engineering, 2022</em></p>
+      <p>aan29@cornell.edu</p>
+  </div>
+  </div>
+
+      
+  <hr id='references'>
       <div style="font-size:18px">
-          <h2>References</h2>
+          <h2 style="text-align:center;">References</h2>
           <a href="https://picamera.readthedocs.io/">PiCamera Document</a><br>
           <a href="http://www.micropik.com/PDF/SG90Servo.pdf">Tower Pro Servo Datasheet</a><br>
           <a href="http://getbootstrap.com/">Bootstrap</a><br>
@@ -166,7 +222,7 @@
 
       </div>
 
-    <hr>
+    <!-- <hr>
 
       <div class="row">
               <h2>Code Appendix</h2>
@@ -176,7 +232,7 @@ int main(){
   printf("Hello World.\n");
 }
               </code></pre>
-      </div>
+      </div> -->
 
     </div><!-- /.container -->
 
