@@ -14,7 +14,7 @@ def get_encodings(users):
             image = fr.load_image_file(path +"/" + _)
 
             image_path = path + "/" + _
-            #print(image_path)
+            print(image_path)
             encoding = fr.face_encodings(image)[0]
             #print(encoding)
 
@@ -42,7 +42,8 @@ def test_recog(test_image,true_name):
 
     face_locations = fr.face_locations(image)
     face_encodings = fr.face_encodings(image, face_locations)
-
+    
+    name = ""
     for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
         matches = fr.compare_faces(known_name_encodings, face_encoding)
         name = ""
