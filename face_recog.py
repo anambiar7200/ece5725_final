@@ -8,7 +8,7 @@ def get_encodings(usr):
     known_names = []
     known_name_encodings = []
     
-    path = "./pictures/" + usr 
+    path = "./pictures/" + str(usr) 
     images = os.listdir(path)
     for _ in images:
         image = fr.load_image_file(path +"/" + _)
@@ -21,9 +21,9 @@ def get_encodings(usr):
         known_name_encodings.append(encoding)
         known_names.append(usr)
     
-    with open("encodings", "a+") as enc: 
+    with open("encodings", "ab") as enc: 
         pickle.dump(known_name_encodings, enc)
-    with open("names", "a+") as names: 
+    with open("names", "ab") as names: 
         pickle.dump(known_names, names)
 
 

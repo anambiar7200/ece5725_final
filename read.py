@@ -222,14 +222,18 @@ def addUser():
 	time.sleep(1)
 	
 	take_photos.take_pics(user)
-	users = os.listdir("./pictures")
-	print(users)
 	add_picture_buttons = {"Please stand by": (160, 120)}
 	disp(add_picture_buttons, my_font)
-	#fr.get_encodings(users)
-	success = "User "+str(user) + " successfully added"
-	add_picture_buttons = {success: (160, 120), "Back": (280, 220)}
-	disp(add_picture_buttons, my_font)
+	try: 
+		fr.get_encodings("user"+str(user))
+		global users
+		users = os.listdir("./pictures")
+		print(users)
+		success = "User "+str(user) + " successfully added"
+		add_picture_buttons = {success: (160, 120), "Back": (280, 220)}
+		disp(add_picture_buttons, my_font)
+	except IndexError:
+		print("didn't detect face")
 	#print(users)
 
 	
@@ -240,6 +244,7 @@ def remUser():
 	pressed = False
 	while(not pressed):
 		if not GPIO.input(11):
+			print("here!")
 			user = 1
 			pressed = True
 		elif not GPIO.input(15):
@@ -248,9 +253,11 @@ def remUser():
 		elif not GPIO.input(16):
 			user = 3
 			pressed = True
+	global users
 	users.remove("user" + str(user))
 	print(users)
 	shutil.rmtree("./pictures/user"+ str(user))
+	users = os.listdir("./pictures")
 	#print(users)
 	success = "User "+str(user) + " successfully removed"
 	removing_initial_buttons = {success: (160, 120), "Back": (280, 220)}
@@ -263,27 +270,42 @@ superusers = [1, 2]
 showing_hist = 0
 adding_user = 0
 removing_user = 0
+global users 
 users = os.listdir("./pictures")
 
 # Main
 
 
 while (running):
-
+	
 	if (not tag_received):
 		disp(start_buttons, my_font)
 		if not GPIO.input(11):
-			tag_received = True
 			first = True 
 			user = 1
-		if not GPIO.input(15):
-			tag_received = True
+			if "user"+str(user) in users:
+				tag_received = True
+			else:
+				fail = "User "+str(user) + " doesn't exist"
+				fail_buttons = {fail: (160, 120)}
+				disp(fail_buttons, my_font)
+				time.sleep(2)
+		elif not GPIO.input(15):
 			first = True 
 			user = 2
-		if not GPIO.input(16):
-			tag_received = True
+			if "user"+str(user) in users:
+				tag_received = True
+			else:
+				print("user doesn't exist")
+		elif not GPIO.input(16):
 			first = True 
 			user = 3
+			if "user"+str(user) in users:
+				tag_received = True
+			else:
+				print("user doesn't exist")
+		
+		
 		disp(start_buttons, my_font)
 		# rdr.wait_for_tag()
 		# (error, tag_type) = rdr.request()
