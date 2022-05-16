@@ -18,13 +18,10 @@ import take_photos
 import shutil
 import pickle
 
-#os.putenv("SDL_VIDEODRIVER","fbcon")
-#os.putenv("SDL_FBDEV", "/dev/fb0")
-#os.putenv("SDL_MOUSEDRV", "TSLIB")
-#os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
-
-#start_time = time.time() 
-#GPIO.setmode(GPIO.BOARD)
+os.putenv("SDL_VIDEODRIVER","fbcon")
+os.putenv("SDL_FBDEV", "/dev/fb1")
+os.putenv("SDL_MOUSEDRV", "TSLIB")
+os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
 
 pygame.init()
 WHITE = 255, 255, 255
@@ -34,7 +31,7 @@ GREEN = 0, 255, 0
 screen = pygame.display.set_mode((320, 240))
 my_font = pygame.font.Font(None, 30)
 my_small_font = pygame.font.Font(None, 20)
-pygame.mouse.set_visible(True)
+pygame.mouse.set_visible(False)
 
 rdr = RFID(1, 0, 1000000, 31, 37, 29)
 util = rdr.util()
@@ -287,6 +284,9 @@ while (running):
 		if not GPIO.input(11):
 			first = True 
 			user = 1
+			my_buttons = {"Verifying user "+str(user):(160, 120)}
+			disp(my_buttons, my_font)
+
 			if "user"+str(user) in users:
 				tag_received = True
 			else:
