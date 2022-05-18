@@ -16,11 +16,12 @@ import face_recog as fr
 import requests
 import take_photos
 import shutil
+import pickle
 
-#os.putenv("SDL_VIDEODRIVER","fbcon")
-#os.putenv("SDL_FBDEV", "/dev/fb1")
-#os.putenv("SDL_MOUSEDRV", "TSLIB")
-#os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
+os.putenv("SDL_VIDEODRIVER","fbcon")
+os.putenv("SDL_FBDEV", "/dev/fb1")
+os.putenv("SDL_MOUSEDRV", "TSLIB")
+os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
 
 pygame.init()
 WHITE = 255, 255, 255
@@ -30,7 +31,7 @@ GREEN = 0, 255, 0
 screen = pygame.display.set_mode((320, 240))
 my_font = pygame.font.Font(None, 30)
 my_small_font = pygame.font.Font(None, 20)
-pygame.mouse.set_visible(True)
+pygame.mouse.set_visible(False)
 
 rdr = RFID(1, 0, 1000000, 31, 37, 29)
 util = rdr.util()
@@ -87,51 +88,56 @@ def GPIO16_callback(channel):
     global first
     tag_received = True
     first = True
-    print("callback!")
-    
-
 
 # Function to lock door (ie retract linear actuator).
 def lock():
-	print("locking")
 	p.ChangeDutyCycle(5)  # retract
 	time.sleep(1)
 	p.ChangeDutyCycle(0)  # stop
 
 # Function to unlock door (ie extend linear actuator).
 def unlock():
-	print("unlocking")
 	p.ChangeDutyCycle(10)  # extend
 	time.sleep(1)
 	p.ChangeDutyCycle(0)  # stop
 
+# Function to store the user login history		
+def storeHist(user, match):
+	x = datetime.now()
+	data = [x.year%2000, x.month, x.day, x.hour, x.minute, x.second, match]
+	try: 
+		history = pickle.load(open("histories", "rb"))
+	except FileNotFoundError:
+		history = {}
+	if user not in history: 
+		history[user] = []
+	if len(history[user]) > 2:
+		history[user] = history[user][:-1]
+	history[user] = [data] + history[user]
+	with open("histories", "wb") as hh: 
+		pickle.dump(history, hh)
 
-def get_img(camera): 
-	stream = io.BytesIO()
-	camera.resolution = (320, 240)
-	camera.capture(stream, format='jpeg')
-	img = cv2.imdecode(numpy.frombuffer(stream.getvalue(), dtype=numpy.uint8), 1)
-	return img
-	#cv2.imwrite('result.jpg',img)
+# Function to display the user history on screen
+def showHist(user):
+	history = pickle.load(open("histories", "rb"))
+	mhist = [("Date", (50, 20)), ("Time", (110, 20)), ("Access Granted", (200, 20)), ("Back", (280, 220))]
+	ypos = 50
+	for hitem in history[user]:
+		date = str(hitem[1])+"/"+str(hitem[2])+"/"+str(hitem[0])
+		time = str(hitem[3])+":"+str(hitem[4])+":"+str(hitem[5])
+		if (hitem[6]):
+			grant = "Granted"
+		else:
+			grant = "Denied"
+		mhist.append((date, (50,ypos)))
+		mhist.append((time, (110,ypos)))
+		mhist.append((grant, (200,ypos)))
+		ypos += 30
+
+	disp_tup(mhist, my_small_font)
 	
-def face_det(img): 
-	#haar_path = (cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-	cascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-	gray_img =cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	faces = cascade.detectMultiScale(gray_img, 1.1, 5)
-	for (x,y,w,h) in faces:
-		#print("found a face")
-		cv2.rectangle(img,(x,y),(x+w,y+h),(255,255,0),4)
-	cv2.imwrite('result.jpg',img)
-	
-	if len(faces) == 1: 
-		print("found a face")
-		return True
-		#face_recog()
-	print("didn't find the face")
-	return False
-		
-def store_hist(uid, usr_num, match):
+# RFID function to store history
+def RFID_store_hist(uid, usr_num, match):
 	util.set_tag(uid)
 	x = datetime.now()
 	data = [x.year%2000, x.month, x.day, x.hour, x.minute, x.second, match]
@@ -144,7 +150,8 @@ def store_hist(uid, usr_num, match):
 	util.rewrite(top, data)
 	util.read_out(top)
 
-def showHist():
+# RFID function to show history
+def RFID_showHist():
 #	hist = [(usr_num * 4), (usr_num * 4) + 1, (usr_num * 4) + 2]
 	
 #	hist1 = rdr.read(hist[0])[1]
@@ -182,12 +189,10 @@ def showHist():
 	mhist = [("Date", (50, 20)), ("Time", (110, 20)), ("Access Granted", (200, 20)),("Back", (280, 220))]
 
 	disp_tup(mhist, my_small_font)
-	#disp(my_hist, my_small_font)
 
 	
-	
+# Function to add a user	
 def addUser():
-	print("adding user")
 	add_initial_buttons = {"Scan your card": (160, 120)}
 	disp(add_initial_buttons, my_font)
 	pressed = False
@@ -225,23 +230,23 @@ def addUser():
 		fr.get_encodings("user"+str(user))
 		global users
 		users = os.listdir("./pictures")
-		print(users)
 		success = "User "+str(user) + " successfully added"
 		add_picture_buttons = {success: (160, 120), "Back": (280, 220)}
 		disp(add_picture_buttons, my_font)
 	except IndexError:
-		print("didn't detect face")
-	#print(users)
+		fail = "Unable to add user."
+		add_fail = {fail: (160, 120), "Back": (280, 220)}
+		disp(add_fail, my_font)
+		
 
-	
+# Function to remove a user	
 def remUser():
-	print("removing user")
 	removing_initial_buttons = {"Please select the user to remove": (160, 120)}
 	disp(removing_initial_buttons, my_font)
 	pressed = False
 	while(not pressed):
 		if not GPIO.input(11):
-			print("here!")
+
 			user = 1
 			pressed = True
 		elif not GPIO.input(15):
@@ -251,15 +256,25 @@ def remUser():
 			user = 3
 			pressed = True
 	global users
-	users.remove("user" + str(user))
-	print(users)
-	shutil.rmtree("./pictures/user"+ str(user))
-	users = os.listdir("./pictures")
-	#print(users)
-	success = "User "+str(user) + " successfully removed"
-	removing_initial_buttons = {success: (160, 120), "Back": (280, 220)}
-	disp(removing_initial_buttons, my_font)
 	
+	rem_picture_buttons = {"Please stand by": (160, 120)}
+	disp(rem_picture_buttons, my_font)
+
+	try:
+		shutil.rmtree("./pictures/user"+ str(user))
+		os.remove("encodings")
+		os.remove("names")
+		users = os.listdir("./pictures")
+		for usr in users:
+			fr.get_encodings(usr)
+		success = "User "+str(user) + " successfully removed"
+		removing_initial_buttons = {success: (160, 120), "Back": (280, 220)}
+		disp(removing_initial_buttons, my_font)
+	except:
+		fail = "User "+str(user) + " does not exist"
+		removing_initial_buttons = {fail: (160, 120), "Back": (280, 220)}
+		disp(removing_initial_buttons, my_font)
+		
 
 GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300)	
 	
@@ -268,20 +283,17 @@ showing_hist = 0
 adding_user = 0
 removing_user = 0
 global users 
+searching = False
 users = os.listdir("./pictures")
 
 # Main
-
-
 while (running):
-	
 	if (not tag_received):
-		disp(start_buttons, my_font)
 		if not GPIO.input(11):
 			first = True 
 			user = 1
-			my_buttons = {"Verifying user "+str(user):(160, 120)}
-			disp(my_buttons, my_font)
+			searching = True
+
 
 			if "user"+str(user) in users:
 				tag_received = True
@@ -293,53 +305,42 @@ while (running):
 		elif not GPIO.input(15):
 			first = True 
 			user = 2
+			searching = True
 			if "user"+str(user) in users:
 				tag_received = True
 			else:
-				print("user doesn't exist")
+				fail = "User "+str(user) + " doesn't exist"
+				fail_buttons = {fail: (160, 120)}
+				disp(fail_buttons, my_font)
+				time.sleep(2)
 		elif not GPIO.input(16):
 			first = True 
 			user = 3
 			if "user"+str(user) in users:
 				tag_received = True
 			else:
-				print("user doesn't exist")
+				fail = "User "+str(user) + " doesn't exist"
+				fail_buttons = {fail: (160, 120)}
+				disp(fail_buttons, my_font)
+				time.sleep(2)
 		
 		
 		disp(start_buttons, my_font)
-		# rdr.wait_for_tag()
-		# (error, tag_type) = rdr.request()
-		# if not error:
-		# 	(error, uid) = rdr.anticoll()
-		# 	if not error:
-		# 		util.auth(rdr.auth_b, [0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF])
-
-		# 		print(uid)
-		# 		if (str(uid) in uids):
-		# 			user = uids[str(uid)]
-		# 			if (user == 1 or user == 2):
-		# 				superuser = 1
-		# 			print(user) 
-
+		
 
 	if (tag_received and first):
-		print("we got here!")
+		my_buttons = {"Verifying User "+str(user):(160, 120)}
+		disp(my_buttons, my_font)
 		first = False
 		camera = picamera.PiCamera()
 		img = camera.capture("compare.jpg")
-		#img = get_img(camera)
-		#detected = face_det(img)
 		name = "user" + str(user)
-		print(name)
 		match = fr.test_recog("compare.jpg", name)
-		print(match)
 		camera.close()
-		#store_hist(uid, user, match)
+		storeHist(user, match)
 
 	if (match):
 		if (user in superusers):
-			
-			#camera.stop_preview()
 			screen.fill(BLACK)
 			
 			options = {"Add User": (160, 30), "Remove User": (160, 70), "Lock": (160, 110), "Unlock": (160, 150), "History": (160, 190), "EXIT": (280, 220)}
@@ -365,15 +366,13 @@ while (running):
 								unlock()
 							elif y > 180 and y < 200:
 								showing_hist = 1
-								#showHist(uid, user)
-								showHist()
+								showHist(user)
 						elif x > 250:
 							if y > 200 and y < 240:
 								tag_received = 0
 								match = False
 			elif showing_hist: 
 				for event in pygame.event.get(): 
-					#print(event)
 					if (event.type is MOUSEBUTTONDOWN):
 						pos = pygame.mouse.get_pos()
 					elif(event.type is MOUSEBUTTONUP):
@@ -382,10 +381,8 @@ while (running):
 						if x > 250: 
 							if y > 200: 
 								showing_hist = False
-								#print("clicked back button")
 			elif adding_user:
 				for event in pygame.event.get(): 
-					#print(event)
 					if (event.type is MOUSEBUTTONDOWN):
 						pos = pygame.mouse.get_pos()
 					elif(event.type is MOUSEBUTTONUP):
@@ -394,10 +391,8 @@ while (running):
 						if x > 250: 
 							if y > 200: 
 								adding_user = False
-								#print("clicked back button")
 			elif removing_user:
 				for event in pygame.event.get(): 
-					#print(event)
 					if (event.type is MOUSEBUTTONDOWN):
 						pos = pygame.mouse.get_pos()
 					elif(event.type is MOUSEBUTTONUP):
@@ -406,37 +401,44 @@ while (running):
 						if x > 250: 
 							if y > 200: 
 								removing_user = False
-								#print("clicked back button")
 		else: 
-			
-			#camera.stop_preview()
 			screen.fill(BLACK)
 			options = {"Lock": (160, 60), "Unlock": (160, 120), "History": (160, 180), "EXIT": (280, 220)}
-			disp(options, my_font)
-			for event in pygame.event.get(): 
-		
-				if (event.type is MOUSEBUTTONDOWN):
-					pos = pygame.mouse.get_pos()
-				elif(event.type is MOUSEBUTTONUP):
-					pos = pygame.mouse.get_pos()
-					x,y = pos    
-					if x > 100 and x < 200:
-						if y < 90:
-							lock()
-						elif y > 100 and y < 150:
-							unlock()
-						elif y > 160 and y < 210:
-							showHist(uid, user)
-					elif x > 250:
-						if y > 200 and y < 240:
-							tag_received = 0
-							match = False
+			if ( not showing_hist ):
+				disp(options, my_font)
+				for event in pygame.event.get(): 
+			
+					if (event.type is MOUSEBUTTONDOWN):
+						pos = pygame.mouse.get_pos()
+					elif(event.type is MOUSEBUTTONUP):
+						pos = pygame.mouse.get_pos()
+						x,y = pos    
+						if x > 100 and x < 200:
+							if y < 90:
+								lock()
+							elif y > 100 and y < 150:
+								unlock()
+							elif y > 160 and y < 210:
+								showHist(user)
+								showing_hist = True
+						elif x > 250:
+							if y > 200 and y < 240:
+								tag_received = 0
+								match = False
+			elif showing_hist: 
+				for event in pygame.event.get(): 
+					if (event.type is MOUSEBUTTONDOWN):
+						pos = pygame.mouse.get_pos()
+					elif(event.type is MOUSEBUTTONUP):
+						pos = pygame.mouse.get_pos()
+						x,y = pos    
+						if x > 250: 
+							if y > 200: 
+								showing_hist = False
 	elif tag_received and (not match): 
-		print("YOU ARE NOT THE USER! >:(")
 		#requests.post("https://maker.ifttt.com/trigger/nonuser_detected/with/key/bZN58Z9OZzwAcmjGQ20Y5C?value1=user1")
 		message = {"Access denied." : (160, 120)}
 		disp(message, my_font)
-		#time.sleep(2)
+		time.sleep(2)
 		tag_received = 0
 		match = False
-		# call the cops

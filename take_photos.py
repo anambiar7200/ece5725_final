@@ -13,7 +13,7 @@ def take_pics(user_num):
     camera.capture(stream, format='jpeg')
     
   img_taken = 0
-  total_num_img = 20
+  total_num_img = 50
 
   dirname = "user" + str(user_num)
   if dirname not in os.listdir("pictures"):

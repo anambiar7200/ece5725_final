@@ -29,14 +29,32 @@ def get_encodings(usr):
 
 
 #test_image = "./test/test.jpg"
-#test_image = "anusha1.png"
+test_image = "anusha1.png"
 #test_image = "alisha1.jpg"
 
 def test_recog(test_image,true_name):
-    with open("encodings", "rb") as enc: 
-        known_name_encodings = pickle.load(enc)
+    known_names = []
     with open("names", "rb") as names: 
-        known_names = pickle.load(names)
+        try: 
+            while True: 
+                known_names+= pickle.load(names)
+        except EOFError: 
+            print("here")
+            
+    known_name_encodings = []        
+    with open("encodings", "rb") as enc: 
+        try: 
+            while True: 
+                known_name_encodings += pickle.load(enc)
+        except EOFError: 
+            print("here")
+            
+            
+            
+    #with open("encodings", "rb") as enc: 
+    #    known_name_encodings = pickle.load(enc)
+    #with open("names", "rb") as names: 
+    #    known_names = pickle.load(names)
     image = cv2.imread(test_image)
     # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
@@ -66,8 +84,12 @@ def test_recog(test_image,true_name):
     # cv2.destroyAllWindows()
 
     return name == true_name
-
-# encode = input("Do you need to get encodings?")
-# if encode == "yes": 
-#     get_encodings(users)
-# print(test_recog(test_image,  "user2"))
+#get_encodings("user2")
+#encode = input("Do you need to get encodings?")
+#if encode == "yes": 
+#    get_encodings("user1")
+#    get_encodings("user2")
+#users = ["user1", "user2"]
+#for usr in users: 
+#    get_encodings(usr)
+#print(test_recog(test_image,  "user2"))
