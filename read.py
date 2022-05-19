@@ -18,10 +18,10 @@ import take_photos
 import shutil
 import pickle
 
-os.putenv("SDL_VIDEODRIVER","fbcon")
-os.putenv("SDL_FBDEV", "/dev/fb1")
-os.putenv("SDL_MOUSEDRV", "TSLIB")
-os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
+#s.putenv("SDL_VIDEODRIVER","fbcon")
+#os.putenv("SDL_FBDEV", "/dev/fb1")
+#os.putenv("SDL_MOUSEDRV", "TSLIB")
+#os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
 
 pygame.init()
 WHITE = 255, 255, 255
@@ -31,7 +31,7 @@ GREEN = 0, 255, 0
 screen = pygame.display.set_mode((320, 240))
 my_font = pygame.font.Font(None, 30)
 my_small_font = pygame.font.Font(None, 20)
-pygame.mouse.set_visible(False)
+pygame.mouse.set_visible(True)
 
 rdr = RFID(1, 0, 1000000, 31, 37, 29)
 util = rdr.util()
@@ -268,6 +268,12 @@ def remUser():
 		success = "User "+str(user) + " successfully removed"
 		removing_initial_buttons = {success: (160, 120), "Back": (280, 220)}
 		disp(removing_initial_buttons, my_font)
+		history = pickle.load(open("histories", "rb"))
+		history.pop(user)
+		print(history)
+		with open("histories", "wb") as hh: 
+			pickle.dump(history, hh)
+		
 	except:
 		fail = "User "+str(user) + " does not exist"
 		removing_initial_buttons = {fail: (160, 120), "Back": (280, 220)}
