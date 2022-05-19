@@ -1,3 +1,5 @@
+# Anusha Nambiar (aan29), Alisha Kochar (ak2255)
+# ECE 5725 Final Project
 import sys
 sys.path.append("/usr/lib/python3/dist-packages")
 import picamera 
