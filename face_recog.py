@@ -14,7 +14,7 @@ def get_encodings(usr):
         image = fr.load_image_file(path +"/" + _)
 
         image_path = path + "/" + _
-        print(image_path)
+        #print(image_path)
         encoding = fr.face_encodings(image)[0]
         #print(encoding)
 

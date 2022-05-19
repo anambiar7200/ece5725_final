@@ -17,7 +17,7 @@ import requests
 import take_photos
 import shutil
 
-#os.putenv("SDL_VIDEODRIVER","fbcon")
+#s.putenv("SDL_VIDEODRIVER","fbcon")
 #os.putenv("SDL_FBDEV", "/dev/fb1")
 #os.putenv("SDL_MOUSEDRV", "TSLIB")
 #os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
@@ -260,6 +260,30 @@ def remUser():
 	removing_initial_buttons = {success: (160, 120), "Back": (280, 220)}
 	disp(removing_initial_buttons, my_font)
 	
+	rem_picture_buttons = {"Please stand by": (160, 120)}
+	disp(rem_picture_buttons, my_font)
+
+	try:
+		shutil.rmtree("./pictures/user"+ str(user))
+		os.remove("encodings")
+		os.remove("names")
+		users = os.listdir("./pictures")
+		for usr in users:
+			fr.get_encodings(usr)
+		success = "User "+str(user) + " successfully removed"
+		removing_initial_buttons = {success: (160, 120), "Back": (280, 220)}
+		disp(removing_initial_buttons, my_font)
+		history = pickle.load(open("histories", "rb"))
+		history.pop(user)
+		print(history)
+		with open("histories", "wb") as hh: 
+			pickle.dump(history, hh)
+		
+	except:
+		fail = "User "+str(user) + " does not exist"
+		removing_initial_buttons = {fail: (160, 120), "Back": (280, 220)}
+		disp(removing_initial_buttons, my_font)
+		
 
 GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300)	
 	
