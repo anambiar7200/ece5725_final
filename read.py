@@ -80,8 +80,6 @@ def disp_tup(blist, font):
 def GPIO13_callback(channel):
     quit()
 
-    
-
 # Physical "RFID tag" button
 def GPIO16_callback(channel):
     global tag_recieved
@@ -436,7 +434,7 @@ while (running):
 							if y > 200: 
 								showing_hist = False
 	elif tag_received and (not match): 
-		#requests.post("https://maker.ifttt.com/trigger/nonuser_detected/with/key/bZN58Z9OZzwAcmjGQ20Y5C?value1=user1")
+		requests.post("https://maker.ifttt.com/trigger/nonuser_detected/with/key/bZN58Z9OZzwAcmjGQ20Y5C?value1=user1")
 		message = {"Access denied." : (160, 120)}
 		disp(message, my_font)
 		time.sleep(2)

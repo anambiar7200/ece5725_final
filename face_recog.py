@@ -47,7 +47,7 @@ def test_recog(test_image,true_name):
             while True: 
                 known_name_encodings += pickle.load(enc)
         except EOFError: 
-            print("here")
+            pass
             
             
             

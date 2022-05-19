@@ -5,6 +5,6 @@ with open("names", "rb") as names:
 		while True: 
 			data.append(pickle.load(names))
 	except EOFError: 
-		print("here")
+		#print("here")
 
 print(data)
