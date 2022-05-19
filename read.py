@@ -215,13 +215,13 @@ def addUser():
 	
 	add_picture_buttons = {"3": (160, 120)}
 	disp(add_picture_buttons, my_font)
-	time.sleep(1)
+	time.sleep(10)
 	add_picture_buttons = {"3 2": (160, 120)}
 	disp(add_picture_buttons, my_font)
-	time.sleep(1)
+	time.sleep(10)
 	add_picture_buttons = {"3 2 1": (160, 120)}
 	disp(add_picture_buttons, my_font)
-	time.sleep(1)
+	time.sleep(10)
 	
 	take_photos.take_pics(user)
 	add_picture_buttons = {"Please stand by": (160, 120)}
