@@ -20,10 +20,10 @@ import take_photos
 import shutil
 import pickle
 
-os.putenv("SDL_VIDEODRIVER","fbcon")
-os.putenv("SDL_FBDEV", "/dev/fb1")
-os.putenv("SDL_MOUSEDRV", "TSLIB")
-os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
+#os.putenv("SDL_VIDEODRIVER","fbcon")
+#os.putenv("SDL_FBDEV", "/dev/fb1")
+#os.putenv("SDL_MOUSEDRV", "TSLIB")
+#os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
 
 pygame.init()
 WHITE = 255, 255, 255
@@ -33,7 +33,7 @@ GREEN = 0, 255, 0
 screen = pygame.display.set_mode((320, 240))
 my_font = pygame.font.Font(None, 30)
 my_small_font = pygame.font.Font(None, 20)
-pygame.mouse.set_visible(False)
+pygame.mouse.set_visible(True)
 
 rdr = RFID(1, 0, 1000000, 31, 37, 29)
 util = rdr.util()
