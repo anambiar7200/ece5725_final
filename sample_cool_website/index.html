@@ -51,6 +51,7 @@
             <li><a href="#obj">Project Objective</a></li>
             <li><a href="#design">Design and Testing</a></li>
             <li><a href="#result">Results and Conclusion</a></li>
+            <li><a href="#future">Future Work</a></li>
             <li><a href="#budget">Budget and Parts</a></li>
             <li><a href="#team">Team Member Info</a></li>
             <li><a href="#references">References</a></li>
@@ -77,18 +78,18 @@
 
       <div style="text-align:center;">
               <h2>Introduction</h2>
-              <p style="text-align: left;padding: 0px 30px;">Our Smart Lock uses <strong>two-factor authenticatio</strong> to grant 
+              <p style="text-align: left;padding: 0px 30px;">Our Smart Lock uses <strong>facial recognition</strong> to grant 
                 access to users recognized by the system. Upon access granted, all users are able to lock or unlock 
-                the system. The first method of authentication uses a user-assigned RFID tag, which is scanned by an 
-                RFID receiver. If recognized by the system, the system will then use a camera to scan the user’s face 
+                the system. The first method of authentication uses one of the piTFT buttons, which upon being pressed, 
+                verifies that there is a user associated with that button. If recognized by the system, the system will then use the piCamera to scan the user’s face 
                 and use <strong>facial recognition</strong> via <strong>machine learning</strong> to either grant access if the user is the correct individual associated 
-                with the tag, or deny access if the user if not the correct individual associated with the tag. Our 
+                with the piTFT button, or deny access if the user if not the correct individual associated with the piTFT button. Our 
                 smart lock has two modes –– 1) a superuser mode –– this individual has the ability to add new users, 
                 remove existing users, view the recent access history associated with their tag (date+time, access 
                 permissions (i.e. granted or denied)), as well as lock and unlock the lock, and 2) a regular user 
                 mode –– this individual has the ability to either lock or unlock the lock, as well as view the recent 
                 access history associated with their tag. The Smart Lock has been developed using a <strong>Raspberry Pi 4B</strong> as 
-                the final project of <strong>ECE 5725 Design with Embedded OS</strong> class at Cornell University.</p>
+                the final project of the <strong>ECE 5725 Design with Embedded OS</strong> class at Cornell University.</p>
       </div>
 
     <hr id='obj'>
@@ -100,7 +101,7 @@
           </div>
           <div class="col-md-8" style="font-size:18px;">
           <ul>
-              <li>Permit users access to the system via two-factor authentication (1. RFID read-tag, 2. facial recognition via ML)</li>
+              <li>Permit users access to the system via an authentication process (1. recognizable piTFT button, 2. facial recognition via ML)</li>
               <li>Permit actions for users and recent history per each user mode (superuser vs. regular)</li>
           </ul>
           </div>
@@ -120,7 +121,33 @@
 
       <div style="text-align:center;">
               <h2>Results and Conclusion</h2>
-              <p style="text-align: left;padding: 0px 30px;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lorem nulla, consectetur at leo vel, pretium bibendum nisl. Cras blandit quam a enim ultrices, eu convallis enim posuere. Donec eleifend enim sed purus consectetur, vitae cursus lectus varius. Vivamus consectetur felis nec est venenatis posuere. Phasellus vitae aliquet erat. In laoreet lacinia mollis. Quisque iaculis nisl fermentum pharetra lobortis. Donec rhoncus dui sem, ac molestie leo tristique vel. Phasellus in nibh feugiat, fringilla lectus in, elementum magna. Etiam quis dui condimentum, tempus ex in, dapibus est. Cras ut congue augue. Donec ac enim ex. Ut id tristique risus, vel porttitor quam. Sed ultricies enim eu nibh porttitor, vel sodales enim feugiat. Fusce volutpat venenatis magna ac ultrices. Curabitur eget urna ut nulla mattis convallis non eu diam.</p>
+              <p style="text-align: left;padding: 0px 30px;">
+                We are satisfied with the end result of our project, though we were not able to accomplish one of our goals. Our original design 
+                integrated a more sophisticated two-factor authentication to grant users access to the system –– the first method of 
+                authentication would have involved a user-assigned RFID tag, which would be scanned by an RFID receiver. If recognized by the 
+                system, the system would then use the piCamera to scan the user’s face and use facial recognition to either grant access if the 
+                user is the correct individual associated with the tag, or deny access if the user if not the correct individ   ual associated with 
+                the tag. At the beginning of working on this final project, the RFID receiver was the first task we worked on connecting to the 
+                RPi. It was originally successful, however, after approximately two weeks, our RFID receiver stopped reading our RFID tags. <br><br>
+
+                We were able to move on from this unfortunate hurdle by switching to using the piTFT buttons as the first system “authentication”. 
+                This allowed us to move forward with our project and focus on the more involved second measure of authentication –– facial 
+                recognition –– as well as the user-specific actions upon being granted access to the smart lock system. <br><br>
+
+                Comments on the facial recognition portion. <br><br>
+
+                Using an incremental design process, as well as using GitHub to store our working files, we were able to complete this project. 
+              </p>
+      </div>
+      <hr id='future'>
+
+      <div style="text-align:center;">
+              <h2>Future Work</h2>
+              <p style="text-align: left;padding: 0px 30px;">
+                Given more time, we definitely would have liked to experiment more with the RFID receiver. An idea we did not get to explore was 
+                working with a voltage amplifier to drive the RFID with 5V from the RPi, as opposed to the general 3.3V. 
+              </p>
+
       </div>
 
       <hr id='budget'>
@@ -195,7 +222,7 @@
     </div>
     <hr id='team'>
   <div style="text-align:center;">
-    <h2>Team Member Information</h2>
+    <h2>The Team</h2>
     <div class="col-md-6" style="font-size:16px">
       <img class="img-rounded" src="pics/Headshot_Kochar.png" alt="Generic placeholder image" width="240" height="240">
       <h4>Alisha Kochar</h4>
@@ -208,6 +235,12 @@
       <p><em>Electrical and Computer Engineering, 2022</em></p>
       <p>aan29@cornell.edu</p>
   </div>
+  <p>We worked on this project collaboratively. Initially, Anusha worked on the Facial Recognition module, whereas Alisha 
+    implemented the RFID detection module and linear actuator functionality. Once the RFID module stopped working on our RPi, 
+    we worked collaboratively to explore other outlines for our project and moved into collectively designing the piTFT 
+    display as well as user functionality for our Smart Lock. We used GitHub to maintain the code base and updated each other 
+    frequently on new thoughts and ideas. We completed the documentation and website together as well.
+  </p>
   </div>
 
       
@@ -249,3 +282,4 @@ int main(){
     <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
   </body>
 </html>
+
