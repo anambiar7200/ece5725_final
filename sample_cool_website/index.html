@@ -119,12 +119,115 @@
 
     <div style="text-align:center;">
       <h2>Design and Testing</h2>
-      <div class="row">
-        <img src="pics/fsm.png" alt="Beginning project FSM">
-      </div>
-      <p style="text-align: left;padding: 0px 30px;">The development of our project was split into three stages: setting
+      <h4 style="text-align: left;">The following is the timeline we followed for our project:</h3>
+      <ul style="text-align: left;">
+        <li><strong>Week 1:</strong> initial scheduling/planning, set up basic RFID reading,
+          set up camera
+        </li>
+        <li><strong>Week 2:</strong> code to write to history to RFID tags, linear actuator (lock hardware) setup, 
+          lock control logic
+        </li>
+        <li><strong>Week 3:</strong> facial recognition module, button logic 
+          (switched from RFIDs to piTFT buttons)</li>
+        <li><strong>Week 4:</strong> piTFT display, code to add/remove users, store user hist from button press 
+          and display to piTFT
+        </li>
+        <li><strong>Week 5:</strong> project write-up and website</li>
+      </ul>
+      
+      <h4 style="text-align: left;"><strong>Week 1</strong></h4>
+        <p style="text-align: left;padding: 0px 30px;">
+          Our initial design project integrated an RFID as the first measure in user-authentication.
+          Thus, we worked on setting up the RFID-readTag module which would read a tag scanned by a user, and 
+          could take one of two actions: <br> 1) allow the user to move to the second measure of user-authentication 
+          (i.e.) the facial recognition module <strong>if the tag is recognized by the system</strong> or <br> 2) depict 
+          an error message to the screen indicating that <strong>the tag is not recognized by the system</strong><br><br>
+          Initially, we had some issues with integrating the RFID with the RPi –– this was caused by the piTFT and RPi sharing the 
+          same SPI. Thus, we needed to edit our /boot/config.txt file to register another SPI for our RPi. Once we 
+          editied this file, we were able to pair our RFID receiver to the RPi and use the 
+          <a href="https://github.com/ondryaso/pi-rc522?fbclid=IwAR1IXO7vXJcHdmke0vXWPXevCFbgDdIrM998u1YaQ0gzrX-hPBmRi9htXok">pirc522 Python library </a>
+          to develop our RFID module. We used the following hardware setup to connect the RFID receiver to the RPi: <br><br>
+        </p>
+        <table style="text-align: center; width: 50%;margin-left: auto;margin-right: auto;">
+          <tr>
+            <th>RFID</th>
+            <!-- <th>Purchase Link</th> -->
+            <th>Pi Pin</th>
+            <th>Pin Name</th>
+          </tr>
+          <tr>
+            <td>SDA</td>
+            <td>37</td>
+            <td>GPIO26</td>
+          </tr>
+          <tr>
+            <td>SCK</td>
+            <td>40</td>
+            <td>SPI1 SCLK</td>
+          </tr>
+          <tr>
+            <td>MOSI</td>
+            <td>38</td>
+            <td>SPI1 MOSI</td>
+          </tr>
+          <tr>
+            <td>MISO</td>
+            <td>35</td>
+            <td>SPI1 MISO</td>
+          </tr>
+          <tr>
+            <td>IRQ</td>
+            <td>29</td>
+            <td>GPIO5</td>
+          </tr>
+          <tr>
+            <td>GND</td>
+            <td>39</td>
+            <td>Ground</td>
+          </tr>
+          <tr>
+            <td>RST</td>
+            <td>31</td>
+            <td>GPIO6</td>
+          </tr>
+          <tr>
+            <td>3.3V</td>
+            <td>17</td>
+            <td>VDD_3V3</td>
+          </tr>
+  
+        </table><br>
+        <p style="text-align: left;padding: 0px 30px;">
+          Once our hardware and software setups were complete, we were able to successfully read the Unique IDentifiers (UID)
+          for each tag waved near the RFID receiver.<br><br>
+          We then moved onto integrating the piCamera with our RPi. We used the INSERT NAME OF PICAMERA, and connected it to the 
+          RPi via the ribbon connector on the camera into the connector slot on the RPi. Please refer to the following image for our setup:
+          INSERT IMAGE OF PICAMERA ATTACHMENT <br><br>
+        </p>
+
+
+
+
+      <h4 style="text-align: left;"><strong>Week 2</strong></h4>
+      <p style="text-align: left;padding: 0px 30px;">
+        Connecting the linear actuator to our RPi was fairly simple and somewhat familiar to working with the DC motors
+        we used in Lab 3. The linear actuator we used required a +6V drive, thus we used the bench power supply to supply the actuator with the 
+        +6V it required to work. We also used the bench power supply to create a common ground between the RPi and the actuator.
+        We then connected the white RC input signal wire from the linear actuator directly to the RPi and breadboard via pin number 36 (GPIO16).
+        <br><br>
+        We then developed a simple Python program (actuator.py) to test the values needed to retract and expand the linear actuator –– 
+        correlating to locking and unlocking the physical lock. <br><br>
+
+        Once this was complete, we completed the hardware setup for the lock, which can be seen in the following image: <br>
+        INSERT PICTURE OF COMPLETE LOCK SETUP<br>   <br>     
+      </p>
+
+      <h4 style="text-align: left;"><strong>Week 3</strong></h4>
+
+      <p style="text-align: left;padding: 0px 30px;">
+        <!-- The development of our project was split into three stages: setting
         up the RFID tags and readers, setting up the facial recognition system, and setting up the lock interface. <br>
-        Talk about RFID here <br> <br>
+        Talk about RFID here <br> <br> -->
         The first step in developing the facial recognition code was setting up and getting comfortable with the
         PiCamera. Once we were able to take both single photos of ourselves and a series of photos from a stream, we
         began working with facial detection. <br><br>
@@ -165,13 +268,111 @@
         found that these formats made it difficult to add new users and made the training less accurate. We decided to
         keep the original format of the data, but that meant that whenever we wanted to remove a user, we had to delete
         all the data, and then re-add the encodings for all the remaining users. For our system of only three users,
-        this did not take too long (about 60 seconds), but in a larger system this would need to be modified. <br><br>
-        We wanted our final project to avoid using the HDMI monitor, keyboard, and mouse, so that it would more closely
-        resemble a real embedded system. To do this, we created various displays for the piTFT screen.
-
-
+        this did not take too long (about 60 seconds), but in a larger system this would need to be modified. <br><br></p>
+       
+        <h4 style="text-align: left;"><strong>Week 4</strong></h4>
+        <p style="text-align: left;padding: 0px 30px;"> We wanted our final project to avoid using the HDMI monitor, keyboard, and mouse, so that it would more closely
+          resemble a real embedded system. To do this, we created various displays for the piTFT screen. The 
+        following FSM depicts our guiding vision for the piTFT display:</p> <br>
+        <div class="row">
+          <img src="pics/fsm.png" alt="Beginning project FSM">
+        </div><br>
+        <p style="text-align: left;padding: 0px 30px;">
+          The initial display would request the user to "Scan your card" (or more likely, press their respective button), and then 
+          wait for system verification via the facial recognition module: 
       </p>
+      <div class="row">
+        <img src="pics/scan_card.png" alt="Scan your card">
+      </div><br>
+      <div class="row">
+        <img src="pics/verifying_user.png" alt="Verifying user">
+      </div><br>
+      
+      
+      <p style="text-align: left;padding: 0px 30px;">
+        Once a user was verified, one of two menu options would display. These two menus differ with respect to the type of user 
+        that is accessing the system –– whether they are a regular user who can only lock, unlock, and view their access history 
+        or a superuser who has additional capability of adding and removing other users. 
+    </p>
+    <div class="row">
+      <img src="pics/superuser_menu.png" alt="Superuser menu">
+    </div><br>
+    <div class="row">
+      <img src="pics/reg_user_menu.png" alt="Regular user menu">
+    </div><br>
+    
+    
+    <p style="text-align: left;padding: 0px 30px;">
+      Upon selecting to lock the lock or unlock the lock, the linear actuator will retract or expand accordingly, and rest in the 
+      appropriate position.
+  </p>
+  <div class="row">
+    <img src="pics/locked.png" alt="Unlocked lock">
+  </div><br>
+  <div class="row">
+    <img src="pics/unlocked.png" alt="Locked lock">
+  </div><br>
+
+  <p style="text-align: left;padding: 0px 30px;">
+    Users can also view their three most recent access attempts to the system, which stores the date and time of access 
+    as well as if the access was granted or not.
+  </p>
+  <div class="row">
+    <img src="pics/superuser_hist.png" alt="History">
+  </div><br>
+
+  <p style="text-align: left;padding: 0px 30px;">
+    Superusers have the ability to add other users to the system. This is a two-step process in which the button they want 
+    associated with the user must be pressed, the user must then stand in front of the camera to allow for their picture to be 
+    taken for use by the facial recognition module. If the facial recognition module was able to verify the user in the images, the 
+    user will be added. Otherwise, if the user's face was not discernible in the pictures that were taken, 
+    the user will not be added, and must try again. 
+  </p>
+  <!-- <div class="row">
+    <img src="pics/added.png" alt="User added">
+  </div> -->
+  <div class="row">
+    <img src="pics/stand_camera.png" alt="User told to stand in front of camera">
+  </div><br>
+  <div class="row">
+    <img src="pics/3.png" alt="Countdown 3">
+  </div><br>
+  <div class="row">
+    <img src="pics/3_2.png" alt="Countdown 32">
+  </div><br>
+  <div class="row">
+    <img src="pics/3_2_1.png" alt="Countdown 321">
+  </div><br>
+  <div class="row">
+    <img src="pics/standby.png" alt="Standby as facial encodings ensue">
+  </div><br>
+  <div class="row">
+    <img src="pics/added.png" alt="User added">
+  </div><br>
+    
+
+    <p style="text-align: left;padding: 0px 30px;">
+      Superusers also have the ability to remove other users from the system. In order to do this, the supermust must simply press
+      the button associated with the user they would like to remove. 
+    </p>
+    <!-- <div class="row">
+      <img src="pics/added.png" alt="User added">
+    </div> -->
+    <div class="row">
+      <img src="pics/sel_del.png" alt="Selecting user to delete">
+    </div><br>
+    <div class="row">
+      <img src="pics/standby.png" alt="Standby as user gets removed">
+    </div><br>
+    
+    <p style="text-align: left;padding: 0px 30px;">
+      Thus, once a user gets removed and their respective button is no longer associated with anyone,
+      they can no longer enter the system, and instead see a "user does not exist screen", as shown in the following image.
+    </p>
+    <div class="row">
+      <img src="pics/user_dne.png" alt="User does not exist">
     </div>
+  </div>
 
     <hr id='results'>
 
@@ -327,10 +528,9 @@
 
 
     <hr id='references'>
-    <div style="font-size:18px">
-      <h2 style="text-align:center;">References</h2>
+    <div style="font-size:18px;text-align:center;">
+      <h2>References</h2>
       <a href="https://picamera.readthedocs.io/">PiCamera Document</a><br>
-      <a href="http://www.micropik.com/PDF/SG90Servo.pdf">Tower Pro Servo Datasheet</a><br>
       <a href="http://getbootstrap.com/">Bootstrap</a><br>
       <a href="http://abyz.co.uk/rpi/pigpio/">Pigpio Library</a><br>
       <a href="https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/">R-Pi GPIO Document</a><br>
