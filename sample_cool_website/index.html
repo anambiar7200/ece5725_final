@@ -268,10 +268,34 @@
         found that these formats made it difficult to add new users and made the training less accurate. We decided to
         keep the original format of the data, but that meant that whenever we wanted to remove a user, we had to delete
         all the data, and then re-add the encodings for all the remaining users. For our system of only three users,
-        this did not take too long (about 60 seconds), but in a larger system this would need to be modified. <br><br></p>
+        this did not take too long (about 60 seconds), but in a larger system this would need to be modified. <br><br>
+        This was also around the same time our RFID receiver stopped working with our RPi. We are not necessarily sure 
+        what exactly happened, but we tried many things such as replacing hardware and reverting back to different kernels,
+         though all of these changes were unsuccessful. This is when we altered out project from two-factor authentication to one-factor 
+         and utilized the piTFT buttons for user-association. This definitely limited the scope of our project (as we would only have 
+         as many users as we could get buttons, whereas an RFID-based smart lock could have as many users as a database could store). 
+         <br><br>
+         However, this was the solution we went with –– using the piTFT buttons instead. This was obviously much more simple 
+         to program than the RFID module. In this way, storing the user history was just as simple as storing the wheel history 
+         as we did in Lab 3. <br> 
+      </p>
        
         <h4 style="text-align: left;"><strong>Week 4</strong></h4>
-        <p style="text-align: left;padding: 0px 30px;"> We wanted our final project to avoid using the HDMI monitor, keyboard, and mouse, so that it would more closely
+        <p style="text-align: left;padding: 0px 30px;"> 
+          During Week 4, we really had to make a big push to our project since we had to rewrite parts of the program we had already begun working on 
+          with the RFID receiver. Thus, we quickly made changes to the way we were adding and removing users, as well as storing user access histories. 
+          
+          <br><br>
+          For adding users, we associated users with piTFT buttons. Thus when a specific piTFT button was pressed, the added user would be associated 
+          with that respective button, and the system's pickle files would be added with information about that user (i.e. image encodings, userid, and histroy). 
+          <br><br>
+          For removing users, we followed the same methodoloy –– when a piTFT button was pressed, the user associated with that button would be removed, as well as their 
+          information in the encodings, userid, and history pickle files.  
+          <br><br>
+          Finally, we stored data access + time and whether the access was granted or denied into the pickle file that only stored histories for respective users.
+           
+          <br><br>
+          We wanted our final project to avoid using the HDMI monitor, keyboard, and mouse, so that it would more closely
           resemble a real embedded system. To do this, we created various displays for the piTFT screen. The 
         following FSM depicts our guiding vision for the piTFT display:</p> <br>
         <div class="row">
