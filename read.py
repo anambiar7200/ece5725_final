@@ -228,7 +228,6 @@ def remUser():
 		disp(removing_initial_buttons, my_font)
 		history = pickle.load(open("histories", "rb"))
 		history.pop(user)
-		print(history)
 		with open("histories", "wb") as hh: 
 			pickle.dump(history, hh)
 		
