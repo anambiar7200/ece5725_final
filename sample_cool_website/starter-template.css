@@ -38,3 +38,16 @@ tr:nth-child(even) {
   margin-right: auto;
   width: 100%;
 }
+
+.side {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.side div {
+  width: 400px;
+  margin: auto;
+}
