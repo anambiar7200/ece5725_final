@@ -1,6 +1,11 @@
-# This code reads  RFID tas and prints the RFID ID to the 
-# command line. These RFID IDs will then be associated with 
-# a specific individual.
+""" Anusha Nambiar (aan29), Alisha Kochar (ak225)
+    ECE 5725 Final 
+    Spring 2022
+"""
+""" This code reads  RFID tas and prints the RFID ID to the 
+command line. These RFID IDs will then be associated with 
+a specific individual.
+"""
 
 # import RPi.GPIO as GPIO
 # from mfrc522 import SimpleMFRC522

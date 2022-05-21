@@ -1,3 +1,12 @@
+""" Anusha Nambiar (aan29), Alisha Kochar (ak225)
+    ECE 5725 Final 
+    Spring 2022
+"""
+""" Unused code that attempted to store names and encodings as: 
+a) a dictionary
+b) a list of pairs
+"""
+
 import face_recognition as fr
 import cv2
 import numpy as np

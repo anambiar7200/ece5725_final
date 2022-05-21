@@ -1,9 +1,21 @@
+""" Anusha Nambiar (aan29), Alisha Kochar (ak225)
+    ECE 5725 Final 
+    Spring 2022
+"""
+"""
+    Module containing the facial recognition functions
+    get_encodings and test_recog used in read.py 
+"""
+
 import face_recognition as fr
 import cv2
 import numpy as np
 import os
 import pickle
 
+# Function that gets the face encodings of all the 
+# photos in ./pictures/usr
+# Write encodings to "encodings" and names to "names"
 def get_encodings(usr):
     known_names = []
     known_name_encodings = []
@@ -14,9 +26,7 @@ def get_encodings(usr):
         image = fr.load_image_file(path +"/" + _)
 
         image_path = path + "/" + _
-        #print(image_path)
         encoding = fr.face_encodings(image)[0]
-        #print(encoding)
 
         known_name_encodings.append(encoding)
         known_names.append(usr)
@@ -29,10 +39,12 @@ def get_encodings(usr):
 
 
 #test_image = "./test/test.jpg"
-test_image = "anusha1.png"
+#test_image = "anusha1.png"
 #test_image = "alisha1.jpg"
 
+# Function that tests whether or not the face in test_image matches true_name
 def test_recog(test_image,true_name):
+    # Get names and encodings
     known_names = []
     with open("names", "rb") as names: 
         try: 
@@ -48,19 +60,16 @@ def test_recog(test_image,true_name):
                 known_name_encodings += pickle.load(enc)
         except EOFError: 
             pass
-            
-            
-            
-    #with open("encodings", "rb") as enc: 
-    #    known_name_encodings = pickle.load(enc)
-    #with open("names", "rb") as names: 
-    #    known_names = pickle.load(names)
-    image = cv2.imread(test_image)
-    # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
+    # Read in the test image
+    image = cv2.imread(test_image)
+
+    # Find the face and get the encoding from test image
     face_locations = fr.face_locations(image)
     face_encodings = fr.face_encodings(image, face_locations)
     
+    # Loop through the encodings and return the name of the one that 
+    # best matches (least face_distance) the test image
     name = ""
     for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
         matches = fr.compare_faces(known_name_encodings, face_encoding)
@@ -71,25 +80,6 @@ def test_recog(test_image,true_name):
 
         if matches[best_match]:
             name = known_names[best_match]
-
-        #cv2.rectangle(image, (left, top), (right, bottom), (0, 0, 255), 2)
-        #cv2.rectangle(image, (left, bottom - 15), (right, bottom), (0, 0, 255), cv2.FILLED)
-        #font = cv2.FONT_HERSHEY_DUPLEX
-        #cv2.putText(image, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-
-
-    # cv2.imshow("Result", image)
-    # cv2.imwrite("./output.jpg", image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
+    # Return wether or not the best match name is the same as the expected name
     return name == true_name
-#get_encodings("user2")
-#encode = input("Do you need to get encodings?")
-#if encode == "yes": 
-#    get_encodings("user1")
-#    get_encodings("user2")
-#users = ["user1", "user2"]
-#for usr in users: 
-#    get_encodings(usr)
-#print(test_recog(test_image,  "user2"))
+

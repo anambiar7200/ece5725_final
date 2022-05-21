@@ -1,5 +1,10 @@
-# Anusha Nambiar (aan29), Alisha Kochar (ak2255)
-# ECE 5725 Final Project
+""" Anusha Nambiar (aan29), Alisha Kochar (ak225)
+    ECE 5725 Final 
+    Spring 2022
+"""
+""" 
+	Main code for smart lock
+"""
 import sys
 sys.path.append("/usr/lib/python3/dist-packages")
 import picamera 
@@ -19,45 +24,6 @@ import requests
 import take_photos
 import shutil
 import pickle
-
-os.putenv("SDL_VIDEODRIVER","fbcon")
-os.putenv("SDL_FBDEV", "/dev/fb1")
-os.putenv("SDL_MOUSEDRV", "TSLIB")
-os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
-
-pygame.init()
-WHITE = 255, 255, 255
-BLACK = 0,0,0
-RED = 255, 0, 0
-GREEN = 0, 255, 0
-screen = pygame.display.set_mode((320, 240))
-my_font = pygame.font.Font(None, 30)
-my_small_font = pygame.font.Font(None, 20)
-pygame.mouse.set_visible(True)
-
-rdr = RFID(1, 0, 1000000, 31, 37, 29)
-util = rdr.util()
-GPIO.setup(11, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(15, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-
-anusha = [194, 238, 139, 27, 188]
-alisha = [51, 8, 135, 33, 157]
-uids = {"[194, 238, 139, 27, 188]": 1, "[51, 8, 135, 33, 157]": 2}
-
-# Setting up Linear Actuator
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(36, GPIO.OUT)
-p = GPIO.PWM(36, 50)
-p.start(0)
-
-running = True
-tag_received = False
-first = False
-match = False
-start_buttons = {"Scan your card": (160, 120)}
 
 # Function to display text on piTFT display.
 def disp(my_buttons, font):
@@ -82,7 +48,7 @@ def disp_tup(blist, font):
 def GPIO13_callback(channel):
     quit()
 
-# Physical "RFID tag" button
+# Physical "RFID tag" button -- UNUSED
 def GPIO16_callback(channel):
     global tag_recieved
     global first
@@ -152,44 +118,35 @@ def RFID_store_hist(uid, usr_num, match):
 
 # RFID function to show history
 def RFID_showHist():
-#	hist = [(usr_num * 4), (usr_num * 4) + 1, (usr_num * 4) + 2]
+	hist = [(usr_num * 4), (usr_num * 4) + 1, (usr_num * 4) + 2]
 	
-#	hist1 = rdr.read(hist[0])[1]
-#	date1 = str(hist1[1])+"/"+str(hist1[2])+"/"+str(hist1[0])
-#	time1 = str(hist1[3])+":"+str(hist1[4])+":"+str(hist1[5])
-#	if (hist1[6]):
-#		grants1 = "Granted"
-#	else:
-#		grants1 = "Denied"
+	hist1 = rdr.read(hist[0])[1]
+	date1 = str(hist1[1])+"/"+str(hist1[2])+"/"+str(hist1[0])
+	time1 = str(hist1[3])+":"+str(hist1[4])+":"+str(hist1[5])
+	if (hist1[6]):
+		grants1 = "Granted"
+	else:
+		grants1 = "Denied"
 	
-#	hist2 = rdr.read(hist[1])[1]
-#	date2 = str(hist2[1])+"/"+str(hist2[2])+"/"+str(hist2[0])
-#	time2 = str(hist2[3])+":"+str(hist2[4])+":"+str(hist2[5])
-#	if (hist2[6]):
-#		grants2 = "Granted"
-#	else:
-#		grants2 = "Denied"
-#	
-#	hist3 = rdr.read(hist[2])[1]
-#	date3 = str(hist3[1])+"/"+str(hist3[2])+"/"+str(hist3[0])
-#	time3 = str(hist3[3])+":"+str(hist3[4])+":"+str(hist3[5])
-#	if (hist3[6]):
-#		grants3 = "Granted"
-#	else:
-#		grants3 = "Denied"
+	hist2 = rdr.read(hist[1])[1]
+	date2 = str(hist2[1])+"/"+str(hist2[2])+"/"+str(hist2[0])
+	time2 = str(hist2[3])+":"+str(hist2[4])+":"+str(hist2[5])
+	if (hist2[6]):
+		grants2 = "Granted"
+	else:
+		grants2 = "Denied"
 	
+	hist3 = rdr.read(hist[2])[1]
+	date3 = str(hist3[1])+"/"+str(hist3[2])+"/"+str(hist3[0])
+	time3 = str(hist3[3])+":"+str(hist3[4])+":"+str(hist3[5])
+	if (hist3[6]):
+		grants3 = "Granted"
+	else:
+		grants3 = "Denied"
 	
-#	mhist = [("Date", (50, 20)), ("Time", (110, 20)), ("Access Granted", (200, 20)),
-#	
-#	(date1, (50,50)), (time1, (110,50)), (grants1, (200,50)),
-#	(date2, (50,80)), (time2, (110,80)), (grants2, (200,80)),
-#	(date3, (50,110)), (time3, (110,110)), (grants3, (200,110))
-#	("Back", (280, 220))]
-
 	mhist = [("Date", (50, 20)), ("Time", (110, 20)), ("Access Granted", (200, 20)),("Back", (280, 220))]
 
 	disp_tup(mhist, my_small_font)
-
 	
 # Function to add a user	
 def addUser():
@@ -238,7 +195,6 @@ def addUser():
 		add_fail = {fail: (160, 120), "Back": (280, 220)}
 		disp(add_fail, my_font)
 		
-
 # Function to remove a user	
 def remUser():
 	removing_initial_buttons = {"Please select the user to remove": (160, 120)}
@@ -280,10 +236,51 @@ def remUser():
 		fail = "User "+str(user) + " does not exist"
 		removing_initial_buttons = {fail: (160, 120), "Back": (280, 220)}
 		disp(removing_initial_buttons, my_font)
-		
 
+
+# Setup piTFT & touchscreen
+os.putenv("SDL_VIDEODRIVER","fbcon")
+os.putenv("SDL_FBDEV", "/dev/fb1")
+os.putenv("SDL_MOUSEDRV", "TSLIB")
+os.putenv("SDL_MOUSEDEV", "/dev/input/touchscreen")
+
+# Initializing pygame
+pygame.init()
+WHITE = 255, 255, 255
+BLACK = 0,0,0
+RED = 255, 0, 0
+GREEN = 0, 255, 0
+screen = pygame.display.set_mode((320, 240))
+my_font = pygame.font.Font(None, 30)
+my_small_font = pygame.font.Font(None, 20)
+pygame.mouse.set_visible(True)
+
+# Setting up RFID and GPIO pins
+rdr = RFID(1, 0, 1000000, 31, 37, 29)
+util = rdr.util()
+GPIO.setup(11, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(15, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(16, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.add_event_detect(13, GPIO.FALLING, callback=GPIO13_callback, bouncetime=300)	
-	
+
+# Some associated RFID tags
+anusha = [194, 238, 139, 27, 188]
+alisha = [51, 8, 135, 33, 157]
+uids = {"[194, 238, 139, 27, 188]": 1, "[51, 8, 135, 33, 157]": 2}
+
+# Setting up Linear Actuator
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(36, GPIO.OUT)
+p = GPIO.PWM(36, 50)
+p.start(0)
+
+# Some control variables
+running = True
+tag_received = False
+first = False
+match = False
+start_buttons = {"Scan your card": (160, 120)}		
 superusers = [1, 2]
 showing_hist = 0
 adding_user = 0
@@ -294,13 +291,13 @@ users = os.listdir("./pictures")
 
 # Main
 while (running):
+	# waiting for tag/button press
 	if (not tag_received):
+		# User 1 detected
 		if not GPIO.input(11):
 			first = True 
 			user = 1
-			searching = True
-
-
+			searching = True 
 			if "user"+str(user) in users:
 				tag_received = True
 			else:
@@ -308,6 +305,7 @@ while (running):
 				fail_buttons = {fail: (160, 120)}
 				disp(fail_buttons, my_font)
 				time.sleep(2)
+		# User 2 detected
 		elif not GPIO.input(15):
 			first = True 
 			user = 2
@@ -319,6 +317,7 @@ while (running):
 				fail_buttons = {fail: (160, 120)}
 				disp(fail_buttons, my_font)
 				time.sleep(2)
+		# User 3 detected
 		elif not GPIO.input(16):
 			first = True 
 			user = 3
@@ -329,12 +328,13 @@ while (running):
 				fail_buttons = {fail: (160, 120)}
 				disp(fail_buttons, my_font)
 				time.sleep(2)
-		
-		
+		# Display start menu
 		disp(start_buttons, my_font)
 		
-
+	# If a tag was recieved 
 	if (tag_received and first):
+		# Display "Verifying User" screen, take photo of user
+		# Verify user's identity
 		my_buttons = {"Verifying User "+str(user):(160, 120)}
 		disp(my_buttons, my_font)
 		first = False
@@ -345,15 +345,17 @@ while (running):
 		camera.close()
 		storeHist(user, match)
 
+	# If photo matches user:
 	if (match):
+		# User is a superuser
 		if (user in superusers):
 			screen.fill(BLACK)
-			
+			# Display superuser menu
 			options = {"Add User": (160, 30), "Remove User": (160, 70), "Lock": (160, 110), "Unlock": (160, 150), "History": (160, 190), "EXIT": (280, 220)}
 			if ( not showing_hist and not adding_user and not removing_user):
 				disp(options, my_font)
+				# Menu button control
 				for event in pygame.event.get(): 
-			
 					if (event.type is MOUSEBUTTONDOWN):
 						pos = pygame.mouse.get_pos()
 					elif(event.type is MOUSEBUTTONUP):
@@ -407,13 +409,16 @@ while (running):
 						if x > 250: 
 							if y > 200: 
 								removing_user = False
+
+		# User is not a superuser
 		else: 
+			# Display regular user menu
 			screen.fill(BLACK)
 			options = {"Lock": (160, 60), "Unlock": (160, 120), "History": (160, 180), "EXIT": (280, 220)}
 			if ( not showing_hist ):
+				# User menu controls
 				disp(options, my_font)
 				for event in pygame.event.get(): 
-			
 					if (event.type is MOUSEBUTTONDOWN):
 						pos = pygame.mouse.get_pos()
 					elif(event.type is MOUSEBUTTONUP):
@@ -441,7 +446,10 @@ while (running):
 						if x > 250: 
 							if y > 200: 
 								showing_hist = False
+	# Identity not verified							
 	elif tag_received and (not match): 
+		# "Call cops," show "acess denied" message, and let the user try again
+		# after 2 seconds
 		requests.post("https://maker.ifttt.com/trigger/nonuser_detected/with/key/bZN58Z9OZzwAcmjGQ20Y5C?value1=user1")
 		message = {"Access denied." : (160, 120)}
 		disp(message, my_font)

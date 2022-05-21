@@ -1,3 +1,10 @@
+""" Anusha Nambiar (aan29), Alisha Kochar (ak225)
+    ECE 5725 Final 
+    Spring 2022
+"""
+"""
+	Script we used to test writing to the RFID tags.
+"""
 from pirc522 import RFID
 import signal
 import time

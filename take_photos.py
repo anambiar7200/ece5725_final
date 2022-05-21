@@ -1,8 +1,15 @@
+""" Anusha Nambiar (aan29), Alisha Kochar (ak225)
+    ECE 5725 Final 
+    Spring 2022
+"""
+"""
+	Module containing the function take_pics(user_num) which takes
+  50 pictures of user_num and saves them to ./pictures/userN
+"""
 import cv2
 import io
 import picamera
 import numpy
-#import keyboard
 import os
 
 def take_pics(user_num):
@@ -24,10 +31,7 @@ def take_pics(user_num):
 
 
   while (img_taken < total_num_img): 
-    #cam = cv2.VideoCapture(0)
-    #rect, img = cam.read()
     img = cv2.imdecode(numpy.frombuffer(stream.getvalue(), dtype=numpy.uint8), 1)
     flname = "pictures/" + dirname + "/pic" + str(img_taken + existing_pics) + ".jpg"
-    #print(flname)
     cv2.imwrite(flname, img)
     img_taken += 1
