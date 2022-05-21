@@ -81,7 +81,8 @@
 
     <div style="text-align:center;">
       <h2>Introduction</h2>
-      <p style="text-align: left;padding: 0px 30px;">Our Smart Lock uses <strong>two-factor authentication</strong> to grant
+      <p style="text-align: left;padding: 0px 30px;">Our Smart Lock uses <strong>two-factor authentication</strong> to
+        grant
         access to users recognized by the system. Upon access granted, all users are able to lock or unlock
         the system. The first method of authentication uses one of the piTFT buttons, which upon being pressed,
         verifies that there is a user associated with that button. If recognized by the system, the system will then use
@@ -104,13 +105,15 @@
     <div class="row">
       <h2 style="text-align:center;">Project Objective</h2>
       <div class="col-md-4" style="text-align:center;">
-        <img class="img-rounded" src="pics/initial_sketch.png" alt="Generic placeholder image" width="330" height="240">
+        <img class="img-rounded" src="pics/overview.png" alt="Project overview" width="330" height="240">
       </div>
       <div class="col-md-8" style="font-size:18px;">
         <ul>
           <li>Permit users access to the system via an authentication process (1. recognizable piTFT button, 2. facial
             recognition via ML)</li>
           <li>Permit actions for users and recent history per each user mode (superuser vs. regular)</li>
+          <li>Send text alerts to superusers after denied access attempts</li>
+          <li>Control bolt lock using an actuator</li>
         </ul>
       </div>
     </div>
@@ -120,33 +123,38 @@
     <div style="text-align:center;">
       <h2>Design and Testing</h2>
       <h4 style="text-align: left;">The following is the timeline we followed for our project:</h3>
-      <ul style="text-align: left;">
-        <li><strong>Week 1:</strong> initial scheduling/planning, set up basic RFID reading,
-          set up camera
-        </li>
-        <li><strong>Week 2:</strong> code to write to history to RFID tags, linear actuator (lock hardware) setup, 
-          lock control logic
-        </li>
-        <li><strong>Week 3:</strong> facial recognition module, button logic 
-          (switched from RFIDs to piTFT buttons)</li>
-        <li><strong>Week 4:</strong> piTFT display, code to add/remove users, store user hist from button press 
-          and display to piTFT
-        </li>
-        <li><strong>Week 5:</strong> project write-up (website) and final demo</li>
-      </ul>
-      
-      <h4 style="text-align: left;"><strong>Week 1</strong></h4>
+        <ul style="text-align: left;">
+          <li><strong>Week 1:</strong> initial scheduling/planning, set up basic RFID reading,
+            set up camera
+          </li>
+          <li><strong>Week 2:</strong> code to write to history to RFID tags, linear actuator (lock hardware) setup,
+            lock control logic
+          </li>
+          <li><strong>Week 3:</strong> facial recognition module, button logic
+            (switched from RFIDs to piTFT buttons)</li>
+          <li><strong>Week 4:</strong> piTFT display, code to add/remove users, store user hist from button press
+            and display to piTFT
+          </li>
+          <li><strong>Week 5:</strong> project write-up (website) and final demo</li>
+        </ul>
+
+        <h4 style="text-align: left;"><strong>Week 1</strong></h4>
         <p style="text-align: left;padding: 0px 30px;">
           Our initial design project integrated an RFID as the first measure in user-authentication.
-          Thus, we worked on setting up the RFID-readTag module which would read a tag scanned by a user, and 
-          could take one of two actions: <br> 1) allow the user to move to the second measure of user-authentication 
-          (i.e. the facial recognition module) <strong>if the tag is recognized by the system</strong> or <br> 2) depict 
-          an error message to the screen indicating that <strong>the tag is not recognized by the system</strong><br><br>
-          Initially, we had some issues with integrating the RFID with the RPi –– this was caused by the piTFT and RPi sharing the 
-          same SPI. Thus, we needed to edit our /boot/config.txt file to register another SPI for our RPi. Once we 
-          editied this file, we were able to pair our RFID receiver to the RPi and use the 
-          <a href="https://github.com/ondryaso/pi-rc522?fbclid=IwAR1IXO7vXJcHdmke0vXWPXevCFbgDdIrM998u1YaQ0gzrX-hPBmRi9htXok">pirc522 Python library </a>
-          to develop our RFID module. We used the following hardware setup to connect the RFID receiver to the RPi: <br><br>
+          We worked on setting up the RFID-readTag module which would read a tag scanned by a user, and
+          could take one of two actions: <br> 1) allow the user to move to the second measure of user-authentication
+          (i.e. the facial recognition module) <strong>if the tag is recognized by the system</strong> or <br> 2) depict
+          an error message to the screen indicating that <strong>the tag is not recognized by the
+            system</strong><br><br>
+          Initially, we had some issues with integrating the RFID with the RPi –– this was caused by the piTFT and RPi
+          sharing the
+          same SPI. Thus, we needed to edit our /boot/config.txt file to register another SPI for our RPi. Once we
+          editied this file, we were able to pair our RFID receiver to the RPi and use the
+          <a
+            href="https://github.com/ondryaso/pi-rc522?fbclid=IwAR1IXO7vXJcHdmke0vXWPXevCFbgDdIrM998u1YaQ0gzrX-hPBmRi9htXok">pirc522
+            Python library </a>
+          to develop our RFID module. We used the following hardware setup to connect the RFID receiver to the RPi:
+          <br><br>
         </p>
         <table style="text-align: center; width: 50%;margin-left: auto;margin-right: auto;">
           <tr>
@@ -194,251 +202,301 @@
             <td>17</td>
             <td>VDD_3V3</td>
           </tr>
-  
+
         </table><br>
         <p style="text-align: left;padding: 0px 30px;">
-          Once our hardware and software setups were complete, we were able to successfully read the Unique IDentifiers (UID)
+          Once our hardware and software setups were complete, we were able to successfully read the Unique IDentifiers
+          (UID)
           for each tag waved near the RFID receiver.<br><br>
-          We then moved onto integrating the piCamera with our RPi. We used the Raspberry Pi Camera V2 and connected it to the 
-          RPi via the ribbon connector on the camera into the connector slot on the RPi. Please refer to the following image for our setup:
-          INSERT IMAGE OF PICAMERA ATTACHMENT <br><br>
+          We then moved onto integrating the piCamera with our RPi. We used the Raspberry Pi Camera V2 and connected it
+          to the
+          RPi via the ribbon connector on the camera into the connector slot on the RPi. Please refer to the following
+          image for our setup: <br><br>
+
+        <div>
+          <img src="pics/picamera_setup.jpg" alt="Picamera + RPi connection" height="300">
+        </div>
+        <br> <br>
+        During this week we also wrote code to store access histories on the RFID tags.
         </p>
 
 
+        <h4 style="text-align: left;"><strong>Week 2</strong></h4>
+        <p style="text-align: left;padding: 0px 30px;">
+          Connecting the linear actuator to our RPi was fairly simple and somewhat familiar due to working with the DC
+          motors
+          we used in Lab 3. The linear actuator we used required a +6V drive, so we connected it to the bench power
+          supply. We also used the bench power supply to create a common ground between the RPi and the
+          actuator.
+          We then connected the white RC input signal wire from the linear actuator directly to the RPi and breadboard
+          via pin number 36 (GPIO16).
+          <br><br>
+          We then developed a simple Python program (actuator.py) to test the values needed to retract and expand the
+          linear actuator ––
+          correlating to locking and unlocking the physical lock. <br><br>
 
-
-      <h4 style="text-align: left;"><strong>Week 2</strong></h4>
-      <p style="text-align: left;padding: 0px 30px;">
-        Connecting the linear actuator to our RPi was fairly simple and somewhat familiar to working with the DC motors
-        we used in Lab 3. The linear actuator we used required a +6V drive, thus we used the bench power supply to supply the actuator with the 
-        +6V it required to work. We also used the bench power supply to create a common ground between the RPi and the actuator.
-        We then connected the white RC input signal wire from the linear actuator directly to the RPi and breadboard via pin number 36 (GPIO16).
-        <br><br>
-        We then developed a simple Python program (actuator.py) to test the values needed to retract and expand the linear actuator –– 
-        correlating to locking and unlocking the physical lock. <br><br>
-
-        Once this was complete, we completed the hardware setup for the lock, which can be seen in the following image: <br>
-       <br>  
+          Once this was complete, we completed the hardware setup for the lock, which can be seen in the following
+          image: <br>
+          <br>
         <div>
-          <img src="pics/locked.png" alt="Hardware lock setup">
-        </div><br> <br>     
-      </p>
+          <img src="pics/locked.png" alt="Hardware lock setup" height="300">
+        </div><br> <br>
+        New paragraph here.
+        </p>
 
-      <h4 style="text-align: left;"><strong>Week 3</strong></h4>
+        <h4 style="text-align: left;"><strong>Week 3</strong></h4>
 
-      <p style="text-align: left;padding: 0px 30px;">
-        <!-- The development of our project was split into three stages: setting
+        <p style="text-align: left;padding: 0px 30px;">
+          <!-- The development of our project was split into three stages: setting
         up the RFID tags and readers, setting up the facial recognition system, and setting up the lock interface. <br>
         Talk about RFID here <br> <br> -->
-        The first step in developing the facial recognition code was setting up and getting comfortable with the
-        PiCamera. Once we were able to take both single photos of ourselves and a series of photos from a stream, we
-        began working with facial detection. <br><br>
-        The facial detection code used a Haar cascade classifier (from the Python module <a
-          href="https://github.com/opencv/opencv-python">openCV</a>) to detect faces in an
-        image and then draw a rectangle around them. We did not end up using this code in the final project because we
-        wanted to focus our display on the piTFT screen, but it helped us better understand the piCamera and openCV
-        modules. <br><br>
-        We first tried to build our facial recognition feature with the module <a
-          href='https://viso.ai/computer-vision/deepface' />DeepFace</a>. This module is very powerful, and gives
-        accurate predictions with only one training image. When we tested the code we wrote with this module on our
-        laptops, it worked correctly, but when we tried to run this code on the RaspberryPi, it did not work. We
-        discovered that this is because DeepFace uses TensorFlow, another commonly used Machine Learning module for
-        Python. When we tried to install TensorFlow to resolve the dependency, we found that there is no stable version
-        of TensorFlow compatible with Python 3.9 (the version we are using on our RaspberryPi). We attempted to
-        downgrade to Python 3.8, but that caused other compatibility issues, so we decided not to use the DeepFace
-        module. <br><br>
-        After finding that DeepFace was not feasible, we switched to the module <a
-          href="https://github.com/ageitgey/face_recognition">Face Recognition</a>. Our initial training code with this
-        module
-        read in all the
-        users photos, stored on the device in folders titled "userN" (where N is the user number), detected and encoded
-        the faces in each photo, and then stored these encodings as well as the associated user names in lists. The
-        recognition code then compared the face encoding in a test image against all the other face endocings, and
-        returned the name associated with the one most similar to the test image. <br><br>
-        Initially, we had no way of storing these encodings, so we had to run the training every time before we could
-        run an image comparision. This made our code incredibly slow, and not feasible for an embedded system. We
-        thought about storing the data in a text file, but that made it
-        difficult and unwieldy to access since the encodings are large matrices. We eventually decided to use the Python
-        library <a href="https://docs.python.org/3/library/pickle.html">Pickle</a>. We use Pickle to serialize the data
-        (convert it
-        into byte streams) and then store this in a file on the RPi. We can then de-serialize the data quickly back into
-        the original format. This allowed us to access the encodings without having to run through all the images and
-        calculate them evey time. We also modified our get_encodings function so that we did not have to re-add existing
-        users every time we wanted to train the data, but rather just add new users to the end of the file. <br> <br>
-        Because our encodings and names and stored in separate files with coordinating indices, removing specific users
-        from the system was a challenge. We tried reformatting the data as a dictionary and as a list of tuples, but
-        found that these formats made it difficult to add new users and made the training less accurate. We decided to
-        keep the original format of the data, but that meant that whenever we wanted to remove a user, we had to delete
-        all the data, and then re-add the encodings for all the remaining users. For our system of only three users,
-        this did not take too long (about 60 seconds), but in a larger system this would need to be modified. <br><br>
-        This was also around the same time our RFID receiver stopped working with our RPi. We are not necessarily sure 
-        what exactly happened, but we tried many things such as replacing hardware and reverting back to different kernels,
-         though all of these changes were unsuccessful. This is when we altered out project from two-factor authentication to one-factor 
-         and utilized the piTFT buttons for user-association. This definitely limited the scope of our project (as we would only have 
-         as many users as we could get buttons, whereas an RFID-based smart lock could have as many users as a database could store). 
-         <br><br>
-         However, this was the solution we went with –– using the piTFT buttons instead. This was obviously much more simple 
-         to program than the RFID module. In this way, storing the user history was just as simple as storing the wheel history 
-         as we did in Lab 3. <br> 
-      </p>
-       
+          The first step in developing the facial recognition code was setting up and getting comfortable with the
+          PiCamera. Once we were able to take both single photos of ourselves and a series of photos from a stream, we
+          began working with facial detection. <br><br>
+          The facial detection code used a Haar cascade classifier (from the Python module <a
+            href="https://github.com/opencv/opencv-python">openCV</a>) to detect faces in an
+          image and then draw a rectangle around them. We did not end up using this code in the final project because we
+          wanted to focus our display on the piTFT screen, but it helped us better understand the piCamera and openCV
+          modules. <br><br>
+          We first tried to build our facial recognition feature with the module <a
+            href='https://viso.ai/computer-vision/deepface' />DeepFace</a>. This module is very powerful, and gives
+          accurate predictions with only one training image. When we tested the code we wrote with this module on our
+          laptops, it worked correctly, but when we tried to run this code on the RaspberryPi, it did not work. We
+          discovered that this is because DeepFace uses TensorFlow, another commonly used Machine Learning module for
+          Python. When we tried to install TensorFlow to resolve the dependency, we found that there is no stable
+          version
+          of TensorFlow compatible with Python 3.9 (the version we are using on our RaspberryPi). We attempted to
+          downgrade to Python 3.8, but that caused other compatibility issues, so we decided not to use the DeepFace
+          module. <br><br>
+          After finding that DeepFace was not feasible, we switched to the module <a
+            href="https://github.com/ageitgey/face_recognition">Face Recognition</a>. Our initial training code with
+          this
+          module
+          read in all the
+          users photos, stored on the device in folders titled "userN" (where N is the user number), detected and
+          encoded
+          the faces in each photo, and then stored these encodings as well as the associated user names in lists. The
+          recognition code then compared the face encoding in a test image against all the other face endocings, and
+          returned the name associated with the one most similar to the test image. <br><br>
+          Initially, we had no way of storing these encodings, so we had to run the training every time before we could
+          run an image comparision. This made our code incredibly slow, and not feasible for an embedded system. We
+          thought about storing the data in a text file, but that made it
+          difficult and unwieldy to access since the encodings are large matrices. We eventually decided to use the
+          Python
+          library <a href="https://docs.python.org/3/library/pickle.html">Pickle</a>. We use Pickle to serialize the
+          data
+          (convert it
+          into byte streams) and then store this in a file on the RPi. We can then de-serialize the data quickly back
+          into
+          the original format. This allowed us to access the encodings without having to run through all the images and
+          calculate them evey time. We also modified our get_encodings function so that we did not have to re-add
+          existing
+          users every time we wanted to train the data, but rather just add new users to the end of the file. <br> <br>
+          Because our encodings and names and stored in separate files with coordinating indices, removing specific
+          users
+          from the system was a challenge. We tried reformatting the data as a dictionary and as a list of tuples, but
+          found that these formats made it difficult to add new users and made the training less accurate. We decided to
+          keep the original format of the data, but that meant that whenever we wanted to remove a user, we had to
+          delete
+          all the data, and then re-add the encodings for all the remaining users. For our system of only three users,
+          this did not take too long (about 60 seconds), but in a larger system this would need to be modified. <br><br>
+          This was also around the same time our RFID receiver stopped working with our RPi. We are not necessarily sure
+          what exactly happened, but we tried many things such as replacing hardware and reverting back to different
+          kernels,
+          though all of these changes were unsuccessful. This is when we altered out project from two-factor
+          authentication to one-factor
+          and utilized the piTFT buttons for user-association. This definitely limited the scope of our project (as we
+          would only have
+          as many users as we could get buttons, whereas an RFID-based smart lock could have as many users as a database
+          could store).
+          <br><br>
+          However, this was the solution we went with –– using the piTFT buttons instead. This was obviously much more
+          simple
+          to program than the RFID module. In this way, storing the user history was just as simple as storing the wheel
+          history
+          as we did in Lab 3. <br>
+        </p>
+
         <h4 style="text-align: left;"><strong>Week 4</strong></h4>
-        <p style="text-align: left;padding: 0px 30px;"> 
-          During Week 4, we really had to make a big push to our project since we had to rewrite parts of the program we had already begun working on 
-          with the RFID receiver. Thus, we quickly made changes to the way we were adding and removing users, as well as storing user access histories. 
-          
+        <p style="text-align: left;padding: 0px 30px;">
+          During Week 4, we really had to make a big push to our project since we had to rewrite parts of the program we
+          had already begun working on
+          with the RFID receiver. Thus, we quickly made changes to the way we were adding and removing users, as well as
+          storing user access histories.
+
           <br><br>
-          For adding users, we associated users with piTFT buttons. Thus when a specific piTFT button was pressed, the added user would be associated 
-          with that respective button, and the system's pickle files would be added with information about that user (i.e. image encodings, userid, and histroy). 
+          For adding users, we associated users with piTFT buttons. Thus when a specific piTFT button was pressed, the
+          added user would be associated
+          with that respective button, and the system's pickle files would be added with information about that user
+          (i.e. image encodings, userid, and histroy).
           <br><br>
-          For removing users, we followed the same methodoloy –– when a piTFT button was pressed, the user associated with that button would be removed, as well as their 
-          information in the encodings, userid, and history pickle files.  
+          For removing users, we followed the same methodoloy –– when a piTFT button was pressed, the user associated
+          with that button would be removed, as well as their
+          information in the encodings, userid, and history pickle files.
           <br><br>
-          Finally, we stored data access + time and whether the access was granted or denied into the pickle file that only stored histories for respective users.
-           
+          Finally, we stored data access + time and whether the access was granted or denied into the pickle file that
+          only stored histories for respective users.
+
           <br><br>
-          We wanted our final project to avoid using the HDMI monitor, keyboard, and mouse, so that it would more closely
-          resemble a real embedded system. To do this, we created various displays for the piTFT screen. The 
-        following FSM depicts our guiding vision for the piTFT display:</p> <br>
+          We wanted our final project to avoid using the HDMI monitor, keyboard, and mouse, so that it would more
+          closely
+          resemble a real embedded system. To do this, we created various displays for the piTFT screen. The
+          following FSM depicts our guiding vision for the piTFT display:
+        </p> <br>
         <div class="row">
-          <img src="pics/fsm.png" alt="Beginning project FSM">
+          <img src="pics/fsm.png" alt="Beginning project FSM" height="600">
         </div><br>
         <p style="text-align: left;padding: 0px 30px;">
-          The initial display would request the user to "Scan your card" (or more likely, press their respective button), and then 
-          wait for system verification via the facial recognition module: 
-      </p>
-      <div class="side">
-        <div>
-          <img src="pics/scan_card.png" alt="Scan your card">
+          The initial display would request the user to "Scan your card" (or more likely, press their respective
+          button), and then
+          wait for system verification via the facial recognition module:
+        </p>
+        <div class="side">
+          <div>
+            <img src="pics/scan_card.png" alt="Scan your card">
+          </div><br>
+          <div>
+            <img src="pics/verifying_user.png" alt="Verifying user">
+          </div>
         </div><br>
-        <div>
-          <img src="pics/verifying_user.png" alt="Verifying user">
-        </div>
-      </div><br>
 
-      <p style="text-align: left;padding: 0px 30px;">
-        If the user was not verified (i.e. their image was not recognized by the system due to them not actually being the user 
-        or the environment/lighting wuality was too poor for the piCamera to discern the user), then an invalid error message would pop up 
-        on the screen and the user would need to try again. TALK ABOUT TEXT MESSAGES HERE. 
-    </p>
-    <div class="side">
-      <div>
-        <img src="pics/scan_card.png" alt="Scan your card">
-      </div><br>
-      <div>
-        <img src="pics/verifying_user.png" alt="Verifying user">
-      </div>
-    </div><br>
-      
-      <p style="text-align: left;padding: 0px 30px;">
-        Once a user was verified, one of two menu options would display. These two menus differ with respect to the type of user 
-        that is accessing the system –– whether they are a regular user who can only lock, unlock, and view their access history 
-        or a superuser who has additional capability of adding and removing other users. 
-    </p>
-    <div class="side">
-      <div>
-        <img src="pics/superuser_menu.png" alt="Superuser menu">
-      </div><br>
-      <div>
-        <img src="pics/reg_user_menu.png" alt="Regular user menu">
-      </div>
-    </div><br>
+        <p style="text-align: left;padding: 0px 30px;">
+          If the user was not verified (i.e. their image was not recognized by the system due to them not actually being
+          the user
+          or the environment/lighting wuality was too poor for the piCamera to discern the user), then an invalid error
+          message would pop up
+          on the screen and the user would need to try again. TALK ABOUT TEXT MESSAGES HERE.
+        </p>
+        <div class="side">
+          <div>
+            <img src="pics/scan_card.png" alt="Scan your card">
+          </div><br>
+          <div>
+            <img src="pics/verifying_user.png" alt="Verifying user">
+          </div>
+        </div><br>
 
-    
-    
-    <p style="text-align: left;padding: 0px 30px;">
-      Upon selecting to lock the lock or unlock the lock, the linear actuator will retract or expand accordingly, and rest in the 
-      appropriate position.
-  </p>
-  <div class="side">
-    <div class="row">
-      <img src="pics/locked.png" alt="Unlocked lock">
-    </div><br>
-    <div class="row">
-      <img src="pics/unlocked.png" alt="Locked lock">
-    </div></div><br>
+        <p style="text-align: left;padding: 0px 30px;">
+          Once a user was verified, one of two menu options would display. These two menus differ with respect to the
+          type of user
+          that is accessing the system –– whether they are a regular user who can only lock, unlock, and view their
+          access history
+          or a superuser who has additional capability of adding and removing other users.
+        </p>
+        <div class="side">
+          <div>
+            <img src="pics/superuser_menu.png" alt="Superuser menu">
+          </div><br>
+          <div>
+            <img src="pics/reg_user_menu.png" alt="Regular user menu">
+          </div>
+        </div><br>
 
-  <p style="text-align: left;padding: 0px 30px;">
-    Users can also view their three most recent access attempts to the system, which stores the date and time of access 
-    as well as if the access was granted or not.
-  </p>
-  <div class="row">
-    <img src="pics/superuser_hist.png" alt="History">
-  </div><br>
 
-  <p style="text-align: left;padding: 0px 30px;">
-    Superusers have the ability to add other users to the system. This is a two-step process in which the button they want 
-    associated with the user must be pressed, the user must then stand in front of the camera to allow for their picture to be 
-    taken for use by the facial recognition module. If the facial recognition module was able to verify the user in the images, the 
-    user will be added. Otherwise, if the user's face was not discernible in the pictures that were taken, 
-    the user will not be added, and must try again. 
-  </p>
-  <!-- <div class="row">
+
+        <p style="text-align: left;padding: 0px 30px;">
+          Upon selecting to lock the lock or unlock the lock, the linear actuator will retract or expand accordingly,
+          and rest in the
+          appropriate position.
+        </p>
+        <div class="side">
+          <div class="row">
+            <img src="pics/locked.png" alt="Unlocked lock">
+          </div><br>
+          <div class="row">
+            <img src="pics/unlocked.png" alt="Locked lock">
+          </div>
+        </div><br>
+
+        <p style="text-align: left;padding: 0px 30px;">
+          Users can also view their three most recent access attempts to the system, which stores the date and time of
+          access
+          as well as if the access was granted or not.
+        </p>
+        <div class="row">
+          <img src="pics/superuser_hist.png" alt="History">
+        </div><br>
+
+        <p style="text-align: left;padding: 0px 30px;">
+          Superusers have the ability to add other users to the system. This is a two-step process in which the button
+          they want
+          associated with the user must be pressed, the user must then stand in front of the camera to allow for their
+          picture to be
+          taken for use by the facial recognition module. If the facial recognition module was able to verify the user
+          in the images, the
+          user will be added. Otherwise, if the user's face was not discernible in the pictures that were taken,
+          the user will not be added, and must try again.
+        </p>
+        <!-- <div class="row">
     <img src="pics/added.png" alt="User added">
   </div> -->
-  <div class="row">
-    <img src="pics/stand_camera.png" alt="User told to stand in front of camera">
-  </div><br>
+        <div class="row">
+          <img src="pics/stand_camera.png" alt="User told to stand in front of camera">
+        </div><br>
 
-  <div class="side">
-      <div>
-        <img src="pics/3.png" alt="Countdown 3">
-      </div><br>
-      <div>
-        <img src="pics/3_2.png" alt="Countdown 32">
-      </div><br>
-      <div>
-        <img src="pics/3_2_1.png" alt="Countdown 321">
-      </div>
-  </div><br>
+        <div class="side">
+          <div>
+            <img src="pics/3.png" alt="Countdown 3">
+          </div><br>
+          <div>
+            <img src="pics/3_2.png" alt="Countdown 32">
+          </div><br>
+          <div>
+            <img src="pics/3_2_1.png" alt="Countdown 321">
+          </div>
+        </div><br>
 
-  <div class="side">
-    <div class="row">
-      <img src="pics/standby.png" alt="Standby as facial encodings ensue">
-    </div><br>
-    <div class="row">
-      <img src="pics/added.png" alt="User added">
-    </div>
-  </div><br>
-    
+        <div class="side">
+          <div class="row">
+            <img src="pics/standby.png" alt="Standby as facial encodings ensue">
+          </div><br>
+          <div class="row">
+            <img src="pics/added.png" alt="User added">
+          </div>
+        </div><br>
 
-    <p style="text-align: left;padding: 0px 30px;">
-      Superusers also have the ability to remove other users from the system. In order to do this, the supermust must simply press
-      the button associated with the user they would like to remove. 
-    </p>
-    <!-- <div class="row">
+
+        <p style="text-align: left;padding: 0px 30px;">
+          Superusers also have the ability to remove other users from the system. In order to do this, the supermust
+          must simply press
+          the button associated with the user they would like to remove.
+        </p>
+        <!-- <div class="row">
       <img src="pics/added.png" alt="User added">
     </div> -->
-    <div class="side">
-      <div>
-      <img src="pics/sel_del.png" alt="Selecting user to delete">
-    </div><br>
-    <div class="row">
-      <img src="pics/standby.png" alt="Standby as user gets removed">
-    </div></div><br>
-    
-    <p style="text-align: left;padding: 0px 30px;">
-      Thus, once a user gets removed and their respective button is no longer associated with anyone,
-      they can no longer enter the system, and instead see a "user does not exist screen", as shown in the following image.
-    </p>
-    <div class="row">
-      <img src="pics/user_dne.png" alt="User does not exist">
-    </div><br>
+        <div class="side">
+          <div>
+            <img src="pics/sel_del.png" alt="Selecting user to delete">
+          </div><br>
+          <div class="row">
+            <img src="pics/standby.png" alt="Standby as user gets removed">
+          </div>
+        </div><br>
 
-    <p style="text-align: left;padding: 0px 30px;">
-      Each menu display also had an EXIT button so users could exit the menu screen once they were done 
-      with their required actions. This EXIT took users back to the initial "Scan your card" screen so that 
-      another user could then access the system.
-    </p>
-  </div>
+        <p style="text-align: left;padding: 0px 30px;">
+          Thus, once a user gets removed and their respective button is no longer associated with anyone,
+          they can no longer enter the system, and instead see a "user does not exist screen", as shown in the following
+          image.
+        </p>
+        <div class="row">
+          <img src="pics/user_dne.png" alt="User does not exist">
+        </div><br>
 
-  <h4 style="text-align: left;"><strong>Week 5</strong></h4>
-  <p style="text-align: left;padding: 0px 30px;">
-    This final week was devoted to working on the project write-up (website) and final demo. 
-    We made a demo setup using a piece of wood we laser cut to fit the RPi piTFT screen+buttons through as well as 
-    the piCamera. We also drilled our lock setup into the board. This aimed to create an environment similar to that of 
-    an actual door lock mechanism on a wall+door. The following is our final demo setup:
-  </p>
+        <p style="text-align: left;padding: 0px 30px;">
+          Each menu display also had an EXIT button so users could exit the menu screen once they were done
+          with their required actions. This EXIT took users back to the initial "Scan your card" screen so that
+          another user could then access the system.
+        </p>
+    </div>
+
+    <h4 style="text-align: left;"><strong>Week 5</strong></h4>
+    <p style="text-align: left;padding: 0px 30px;">
+      This final week was devoted to working on the project write-up (website) and final demo.
+      We made a demo setup using a piece of wood we laser cut to fit the RPi piTFT screen+buttons through as well as
+      the piCamera. We also drilled our lock setup into the board. This aimed to create an environment similar to that
+      of
+      an actual door lock mechanism on a wall+door. The following is our final demo setup:
+    </p>
 
     <hr id='results'>
 
@@ -602,8 +660,10 @@
       <a href="https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/">R-Pi GPIO Document</a><br>
       <a href="https://github.com/opencv/opencv-python">openCV</a> <br>
       <a href="https://github.com/ageitgey/face_recognition">Face Recognition</a> <br>
-      <a href="https://github.com/ondryaso/pi-rc522?fbclid=IwAR1IXO7vXJcHdmke0vXWPXevCFbgDdIrM998u1YaQ0gzrX-hPBmRi9htXok">PIRC522</a> <br>
-      
+      <a
+        href="https://github.com/ondryaso/pi-rc522?fbclid=IwAR1IXO7vXJcHdmke0vXWPXevCFbgDdIrM998u1YaQ0gzrX-hPBmRi9htXok">PIRC522</a>
+      <br>
+
     </div>
 
     <!-- <hr>
