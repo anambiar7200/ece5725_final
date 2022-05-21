@@ -124,13 +124,51 @@
       </div>
       <p style="text-align: left;padding: 0px 30px;">The development of our project was split into three stages: setting
         up the RFID tags and readers, setting up the facial recognition system, and setting up the lock interface. <br>
-        Talk about RFID here <br>
+        Talk about RFID here <br> <br>
         The first step in developing the facial recognition code was setting up and getting comfortable with the
         PiCamera. Once we were able to take both single photos of ourselves and a series of photos from a stream, we
-        began working with facial detection. <br>
-        The facial detection code used a Haar cascade classifier (from the Python module openCV) to detect faces in an
-        image and then drew a rectangle around them.
-        <a href='https://viso.ai/computer-vision/deepface' />DeepFace</a>
+        began working with facial detection. <br><br>
+        The facial detection code used a Haar cascade classifier (from the Python module <a
+          href="https://github.com/opencv/opencv-python">openCV</a>) to detect faces in an
+        image and then draw a rectangle around them. We did not end up using this code in the final project because we
+        wanted to focus our display on the piTFT screen, but it helped us better understand the piCamera and openCV
+        modules. <br><br>
+        We first tried to build our facial recognition feature with the module <a
+          href='https://viso.ai/computer-vision/deepface' />DeepFace</a>. This module is very powerful, and gives
+        accurate predictions with only one training image. When we tested the code we wrote with this module on our
+        laptops, it worked correctly, but when we tried to run this code on the RaspberryPi, it did not work. We
+        discovered that this is because DeepFace uses TensorFlow, another commonly used Machine Learning module for
+        Python. When we tried to install TensorFlow to resolve the dependency, we found that there is no stable version
+        of TensorFlow compatible with Python 3.9 (the version we are using on our RaspberryPi). We attempted to
+        downgrade to Python 3.8, but that caused other compatibility issues, so we decided not to use the DeepFace
+        module. <br><br>
+        After finding that DeepFace was not feasible, we switched to the module <a
+          href="https://github.com/ageitgey/face_recognition">Face Recognition</a>. Our initial training code with this
+        module
+        read in all the
+        users photos, stored on the device in folders titled "userN" (where N is the user number), detected and encoded
+        the faces in each photo, and then stored these encodings as well as the associated user names in lists. The
+        recognition code then compared the face encoding in a test image against all the other face endocings, and
+        returned the name associated with the one most similar to the test image. <br><br>
+        Initially, we had no way of storing these encodings, so we had to run the training every time before we could
+        run an image comparision. This made our code incredibly slow, and not feasible for an embedded system. We
+        thought about storing the data in a text file, but that made it
+        difficult and unwieldy to access since the encodings are large matrices. We eventually decided to use the Python
+        library <a href="https://docs.python.org/3/library/pickle.html">Pickle</a>. We use Pickle to serialize the data
+        (convert it
+        into byte streams) and then store this in a file on the RPi. We can then de-serialize the data quickly back into
+        the original format. This allowed us to access the encodings without having to run through all the images and
+        calculate them evey time. We also modified our get_encodings function so that we did not have to re-add existing
+        users every time we wanted to train the data, but rather just add new users to the end of the file. <br> <br>
+        Because our encodings and names and stored in separate files with coordinating indices, removing specific users
+        from the system was a challenge. We tried reformatting the data as a dictionary and as a list of tuples, but
+        found that these formats made it difficult to add new users and made the training less accurate. We decided to
+        keep the original format of the data, but that meant that whenever we wanted to remove a user, we had to delete
+        all the data, and then re-add the encodings for all the remaining users. For our system of only three users,
+        this did not take too long (about 60 seconds), but in a larger system this would need to be modified. <br><br>
+        We wanted our final project to avoid using the HDMI monitor, keyboard, and mouse, so that it would more closely
+        resemble a real embedded system. To do this, we created various displays for the piTFT screen.
+
 
       </p>
     </div>
@@ -161,10 +199,13 @@
         –– facial
         recognition –– as well as the user-specific actions upon being granted access to the smart lock system. <br><br>
 
-        Comments on the facial recognition portion. <br><br>
+        We are happy with the accuracy of our facial recognition system for the size of the project. The
+        system is able to differentiate between users easily, and typically recognizes new photos of users as long as
+        the lighting conditions are not too poor. The system is also quite efficient for its size. It takes about thirty
+        seconds to add a new user and about a minute to remove one. <br><br>
 
         Using an incremental design process, as well as using GitHub to store our working files, we were able to
-        complete this project.
+        complete this project at a good pace and by the deadline.
       </p>
     </div>
     <hr id='future'>
@@ -174,7 +215,15 @@
       <p style="text-align: left;padding: 0px 30px;">
         Given more time, we definitely would have liked to experiment more with the RFID receiver. An idea we did not
         get to explore was
-        working with a voltage amplifier to drive the RFID with 5V from the RPi, as opposed to the general 3.3V.
+        working with a voltage amplifier to drive the RFID with 5V from the RPi, as opposed to the general 3.3V. <br>
+        <br>
+        Additionally, we wanted to integrate "promote user" and "demote user" functionality so that users could go from
+        regular users to super users and vice versa.
+        <br> <br>
+        Finally, if we had more time we would modify our system to accomodate more users. Currently all the user
+        training images, the encoding information, and the access history are all stored on the RaspberryPi. Since we
+        did not have more than three users, we had enough storage, but for a realistic system with more users than that,
+        we would need to integrate another data storage method, such as a database.
       </p>
 
     </div>
@@ -232,13 +281,18 @@
           <td>Owned (Alisha)</td>
         </tr>
         <tr>
+          <td>ClickSent Text Message Service</td>
+          <td>$20.00</td>
+          <td>Purchased (Anusha)</td>
+        </tr>
+        <tr>
           <td style="text-align:right;"><strong>Total</strong></td>
-          <td>$184.05</td>
+          <td>$204.05</td>
           <td></td>
         </tr>
         <tr>
           <td style="text-align:right;"><strong>Actual Expenditure</strong></td>
-          <td>$0</td>
+          <td>$20</td>
           <td>Items bought for this project</td>
         </tr>
 
