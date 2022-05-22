@@ -9,7 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Starter Template for Bootstrap</title>
+  <title>Smart Lock</title>
 
   <!-- Bootstrap core CSS -->
   <link href="dist/css/bootstrap.min.css" rel="stylesheet">
@@ -83,18 +83,20 @@
       <h2>Introduction</h2>
       <p style="text-align: left;padding: 0px 30px;">Our Smart Lock uses <strong>two-factor authentication</strong> to
         grant
-        access to users recognized by the system. Upon access granted, all users are able to lock or unlock
+        access to users recognized by the system. Upon access being granted, all users can lock or unlock
         the system. The first method of authentication uses one of the piTFT buttons, which upon being pressed,
         verifies that there is a user associated with that button. If recognized by the system, the system will then use
         the piCamera to scan the user’s face
         and use <strong>facial recognition</strong> to either grant access if the
         user is the correct individual associated
-        with the piTFT button, or deny access if the user if not the correct individual associated with the piTFT
+        with the piTFT button or deny access if the user is not the correct individual associated with the piTFT
         button –– our second measure of authentication. Our
-        smart lock has two modes –– 1) a superuser mode –– this individual has the ability to add new users,
-        remove existing users, view the recent access history associated with their tag (date+time, access
-        permissions (i.e. granted or denied), as well as lock and unlock the lock and 2) a regular user
-        mode –– this individual has the ability to either lock or unlock the lock, as well as view the recent
+        smart lock has two modes: superuser or regular user. An individual with superuser rights has the ability to add
+        new users,
+        remove existing users, and view the recent access history associated with their tag, as well as the ability to
+        lock and unlock the lock. A regular user only has the ability to either lock or unlock the lock, and view
+        the
+        recent
         access history associated with their tag. The Smart Lock has been developed using a <strong>Raspberry Pi
           4B</strong> as
         the final project of the <strong>ECE 5725 Design with Embedded OS</strong> class at Cornell University.</p>
@@ -146,7 +148,8 @@
           (i.e. the facial recognition module) <strong>if the tag is recognized by the system</strong> or <br> 2) depict
           an error message to the screen indicating that <strong>the tag is not recognized by the
             system</strong><br><br>
-          Initially, we had some issues with integrating the RFID with the RPi –– this was caused by the piTFT and RPi
+          Initially, we had some issues with integrating the RFID with the RPi –– this was caused by the piTFT and RFID
+          reader
           sharing the
           same SPI. Thus, we needed to edit our /boot/config.txt file to register another SPI for our RPi. Once we
           editied this file, we were able to pair our RFID receiver to the RPi and use the
@@ -218,9 +221,7 @@
         </div>
         <br> <br>
         <p style="text-align: left;padding: 0px 30px;">
-        During this week we also wrote code to store access histories on the RFID tags.
         </p>
-
 
         <h4 style="text-align: left;"><strong>Week 2</strong></h4>
         <p style="text-align: left;padding: 0px 30px;">
@@ -239,10 +240,22 @@
           Once this was complete, we completed the hardware setup for the lock, which can be seen in the following
           image: <br>
           <br>
+        </p>
         <div>
           <img src="pics/locked.png" alt="Hardware lock setup" height="300">
         </div><br> <br>
-        New paragraph here.
+        <p style="text-align: left;padding: 0px 30px;">
+          During this week we also wrote code to write user access histories to the RFID tags. Tyipcal RFID tags have
+          sixteen sectors, and these sectors are divided into four blocks of sixteen bytes each. The first block in the
+          first sector (S0B0)
+          cannot be written to because it contains manufacturer data, but we were able to use the remaining blocks to
+          store access histories.
+          We stored the date (year, month, day), time (hour, minute, second), and whether or not access was granted
+          (True/False) for the three most recent access attempts. Data was stored in order of newest to oldest, so at
+          every new access
+          attempt, the new entry was stored at the top, the oldest entry was removed, and the others were shifted down.
+          Our original function to display the history would read the data stored on the RFID tag and display it on the
+          piTFT screen.
         </p>
 
         <h4 style="text-align: left;"><strong>Week 3</strong></h4>
@@ -276,24 +289,26 @@
           read in all the
           users photos, stored on the device in folders titled "userN" (where N is the user number), detected and
           encoded
-          the faces in each photo, and then stored these encodings as well as the associated user names in lists. The
+          the faces in each photo, and then stored these encodings and their associated user names in lists. The
           recognition code then compared the face encoding in a test image against all the other face endocings, and
-          returned the name associated with the one most similar to the test image. <br><br>
+          returned the name associated with the encoding most similar to the test image. <br><br>
           Initially, we had no way of storing these encodings, so we had to run the training every time before we could
           run an image comparision. This made our code incredibly slow, and not feasible for an embedded system. We
           thought about storing the data in a text file, but that made it
-          difficult and unwieldy to access since the encodings are large matrices. We eventually decided to use the
+          difficult and unwieldy to access since the encodings are formatted as large matrices. We eventually decided to
+          use the
           Python
-          library <a href="https://docs.python.org/3/library/pickle.html">Pickle</a>. We use Pickle to serialize the
+          library <a href="https://docs.python.org/3/library/pickle.html">Pickle</a>. We used Pickle to serialize the
           data
           (convert it
-          into byte streams) and then store this in a file on the RPi. We can then de-serialize the data quickly back
+          into byte streams) and then store this in a file on the RPi. We could then de-serialize the data quickly back
           into
           the original format. This allowed us to access the encodings without having to run through all the images and
           calculate them evey time. We also modified our get_encodings function so that we did not have to re-add
           existing
-          users every time we wanted to train the data, but rather just add new users to the end of the file. <br> <br>
-          Because our encodings and names and stored in separate files with coordinating indices, removing specific
+          users every time we wanted to train the data, but rather just add new users' information to the end of the
+          file. <br> <br>
+          Because our encodings and names were stored in separate files with coordinating indices, removing specific
           users
           from the system was a challenge. We tried reformatting the data as a dictionary and as a list of tuples, but
           found that these formats made it difficult to add new users and made the training less accurate. We decided to
@@ -301,41 +316,35 @@
           delete
           all the data, and then re-add the encodings for all the remaining users. For our system of only three users,
           this did not take too long (about 60 seconds), but in a larger system this would need to be modified. <br><br>
-          This was also around the same time our RFID receiver stopped working with our RPi. We are not necessarily sure
-          what exactly happened, but we tried many things such as replacing hardware and reverting back to different
-          kernels,
-          though all of these changes were unsuccessful. This is when we altered out project from two-factor
-          authentication to one-factor
-          and utilized the piTFT buttons for user-association. This definitely limited the scope of our project (as we
-          would only have
-          as many users as we could get buttons, whereas an RFID-based smart lock could have as many users as a database
-          could store).
-          <br><br>
-          However, this was the solution we went with –– using the piTFT buttons instead. This was obviously much more
-          simple
-          to program than the RFID module. In this way, storing the user history was just as simple as storing the wheel
-          history
-          as we did in Lab 3. <br>
+          This was also around the same time our RFID receiver stopped working with our RPi. We tried many things such
+          as replacing hardware and reverting back to different
+          kernels, to debug, but all of these changes were unsuccessful. After several days of debugging, we altered our
+          project from
+          two-factor to one-factor authentication
+          and utilized the piTFT buttons for user-association. This definitely limited the scope of our project -- we
+          could only have
+          as many users as buttons, whereas an RFID-based smart lock could have as many users as a database
+          could store.
         </p>
 
         <h4 style="text-align: left;"><strong>Week 4</strong></h4>
         <p style="text-align: left;padding: 0px 30px;">
-          During Week 4, we really had to make a big push to our project since we had to rewrite parts of the program we
-          had already begun working on
-          with the RFID receiver. Thus, we quickly made changes to the way we were adding and removing users, as well as
+          During Week 4, we dedicated a lot of time to the project since we had to rewrite the parts of the system which
+          depended on the RFID receiver. We quickly made changes to the way we were adding and removing users, as
+          well as
           storing user access histories.
 
           <br><br>
-          For adding users, we associated users with piTFT buttons. Thus when a specific piTFT button was pressed, the
+          For adding users, we associated users with piTFT buttons. When a specific piTFT button was pressed, the
           added user would be associated
-          with that respective button, and the system's pickle files would be added with information about that user
-          (i.e. image encodings, userid, and histroy).
+          with that respective button, information about that user
+          (i.e. image encodings, userid, and histroy) would be added to the system's pickle files.
           <br><br>
-          For removing users, we followed the same methodoloy –– when a piTFT button was pressed, the user associated
+          For removing users, we followed the same methodology –– when a piTFT button was pressed, the user associated
           with that button would be removed, as well as their
           information in the encodings, userid, and history pickle files.
           <br><br>
-          Finally, we stored data access + time and whether the access was granted or denied into the pickle file that
+          Finally, we stored date, time, and whether the access was granted or denied into the pickle file that
           only stored histories for respective users.
 
           <br><br>
@@ -354,26 +363,32 @@
         </p>
         <div class="side">
           <div>
-            <img src="pics/scan_card.png" alt="Scan your card">
+            <img src="pics/scan_card.png" alt="Scan your card" height="240">
           </div><br>
           <div>
-            <img src="pics/verifying_user.png" alt="Verifying user">
+            <img src="pics/verifying_user.png" alt="Verifying user" height="240">
           </div>
         </div><br>
 
         <p style="text-align: left;padding: 0px 30px;">
           If the user was not verified (i.e. their image was not recognized by the system due to them not actually being
           the user
-          or the environment/lighting wuality was too poor for the piCamera to discern the user), then an invalid error
+          or the environment/lighting quality was too poor for the piCamera to discern the user), then an error
           message would pop up
-          on the screen and the user would need to try again. TALK ABOUT TEXT MESSAGES HERE.
-        </p>
+          on the screen and the user would need to try again. As an added security measure, we created an automation
+          with
+          <a href="https://ifttt.com/explore">IFTTT (If This Then That)</a> to send a text message to Anusha's phone
+          whenever a failed access occured. Whenever
+          a user's image could not be identified, our code made an API call to IFTTT. The applet we created with IFTTT
+          then trigerred a text message to be sent to Anusha's phone through <a
+            href="https://www.clicksend.com/us/">ClickSend</a>, a mass SMS sending platform. The "Acess Denied" screen
+          and an example text message can be seen below.
         <div class="side">
           <div>
-            <img src="pics/scan_card.png" alt="Scan your card">
+            <img src="pics/access_denied.png" alt="Access Denied screen" height="240">
           </div><br>
           <div>
-            <img src="pics/verifying_user.png" alt="Verifying user">
+            <img src="pics/text_warning.jpg" alt="Text message warning" height="240">
           </div>
         </div><br>
 
@@ -382,7 +397,7 @@
           type of user
           that is accessing the system –– whether they are a regular user who can only lock, unlock, and view their
           access history
-          or a superuser who has additional capability of adding and removing other users.
+          or a superuser who has additional capabilities of adding and removing other users.
         </p>
         <div class="side">
           <div>
@@ -402,10 +417,10 @@
         </p>
         <div class="side">
           <div class="row">
-            <img src="pics/locked.png" alt="Unlocked lock">
+            <img src="pics/locked.png" alt="Unlocked lock" height="240">
           </div><br>
           <div class="row">
-            <img src="pics/unlocked.png" alt="Locked lock">
+            <img src="pics/unlocked.png" alt="Locked lock" height="240">
           </div>
         </div><br>
 
@@ -419,9 +434,10 @@
         </div><br>
 
         <p style="text-align: left;padding: 0px 30px;">
-          Superusers have the ability to add other users to the system. This is a two-step process in which the button
+          Superusers have the ability to add other users to the system. This is a two-step process -- first the button
           they want
-          associated with the user must be pressed, the user must then stand in front of the camera to allow for their
+          associated with the user must be pressed, then the user must then stand in front of the camera to allow for
+          their
           picture to be
           taken for use by the facial recognition module. If the facial recognition module was able to verify the user
           in the images, the
@@ -437,22 +453,26 @@
 
         <div class="side">
           <div>
-            <img src="pics/3.png" alt="Countdown 3">
+            <img src="pics/3.png" alt="Countdown 3" height="240">
           </div><br>
           <div>
-            <img src="pics/3_2.png" alt="Countdown 32">
+            <img src="pics/3_2.png" alt="Countdown 32" height="240">
           </div><br>
           <div>
-            <img src="pics/3_2_1.png" alt="Countdown 321">
+            <img src="pics/3_2_1.png" alt="Countdown 321" height="240">
           </div>
         </div><br>
 
+        <div class="row">
+          <img src="pics/standby.png" alt="Standby as facial encodings ensue" height="240">
+        </div><br>
         <div class="side">
+
           <div class="row">
-            <img src="pics/standby.png" alt="Standby as facial encodings ensue">
-          </div><br>
+            <img src="pics/added.png" alt="User added" height="240">
+          </div>
           <div class="row">
-            <img src="pics/added.png" alt="User added">
+            <img src="pics/add_user_fail.png" alt="Unable to add user" height="240">
           </div>
         </div><br>
 
@@ -476,7 +496,7 @@
 
         <p style="text-align: left;padding: 0px 30px;">
           Thus, once a user gets removed and their respective button is no longer associated with anyone,
-          they can no longer enter the system, and instead see a "user does not exist screen", as shown in the following
+          they can no longer enter the system, and instead see a "user does not exist" screen, as shown in the following
           image.
         </p>
         <div class="row">
@@ -496,19 +516,20 @@
       We made a demo setup using a piece of wood we laser cut to fit the RPi piTFT screen+buttons through as well as
       the piCamera. We also drilled our lock setup into the board. This aimed to create an environment similar to that
       of
-      an actual door lock mechanism on a wall+door. The following is our final demo setup:
-      <div class="row">
-        <img src="pics/demo_setup.png" alt="Final Demo Setup" style="width: 400px;margin: auto; display: block;">
-      </div>
+      an actual door lock mechanism on a wall and door. The following is our final demo setup:
+    <div class="row">
+      <img src="pics/demo_setup.png" alt="Final Demo Setup" style="width: 400px;margin: auto; display: block;">
+    </div>
     </p>
-    
+
 
     <hr id='results'>
 
     <div style="text-align:center;">
       <h2>Results and Conclusion</h2>
       <p style="text-align: left;padding: 0px 30px;">
-        We are satisfied with the end result of our project, though we were not able to accomplish one of our goals. Our
+        We are satisfied with the end result of our project, though we were not able to accomplish one of our main
+        goals. Our
         original design
         integrated a more sophisticated two-factor authentication to grant users access to the system –– the first
         method of
@@ -548,12 +569,12 @@
         working with a voltage amplifier to drive the RFID with 5V from the RPi, as opposed to the general 3.3V. <br>
         <br>
         Additionally, we wanted to integrate "promote user" and "demote user" functionality so that users could go from
-        regular users to super users and vice versa.
+        regular users to superusers and vice versa.
         <br> <br>
         Finally, if we had more time we would modify our system to accomodate more users. Currently all the user
         training images, the encoding information, and the access history are all stored on the RaspberryPi. Since we
         did not have more than three users, we had enough storage, but for a realistic system with more users than that,
-        we would need to integrate another data storage method, such as a database.
+        we would need to integrate another data storage method, such as an online database.
       </p>
 
     </div>
@@ -667,6 +688,11 @@
       <a href="https://github.com/ageitgey/face_recognition">Face Recognition</a> <br>
       <a
         href="https://github.com/ondryaso/pi-rc522?fbclid=IwAR1IXO7vXJcHdmke0vXWPXevCFbgDdIrM998u1YaQ0gzrX-hPBmRi9htXok">PIRC522</a>
+      <br>
+      <a href="https://docs.python.org/3/library/pickle.html">Python Pickle Library</a> <br>
+      <a href="https://ifttt.com/explore">IFTTT (If This Then That)</a> <br>
+      <a href="https://www.clicksend.com/us/">ClickSend</a> <br>
+
       <br>
 
     </div>
